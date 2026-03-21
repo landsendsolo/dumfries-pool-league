@@ -10,13 +10,13 @@ export const metadata = {
   title: "Competitions | Dumfries Pool League",
 };
 
-interface SoSGroup {
+export interface SoSGroup {
   label: string;
   standings: TeamStanding[];
   results: Result[];
 }
 
-interface CompetitionSection {
+export interface CompetitionSection {
   id: string;
   label: string;
   standings: TeamStanding[];
@@ -33,6 +33,8 @@ export default async function CompetitionsPage() {
     sosBResults,
     sosCResults,
     sosDResults,
+    sosMainResults,
+    sosMastersResults,
     tcTable,
     tcWk2Table,
     tcResults,
@@ -48,6 +50,8 @@ export default async function CompetitionsPage() {
     getResultsByCompetition(COMPETITIONS.SOS_GROUP_B),
     getResultsByCompetition(COMPETITIONS.SOS_GROUP_C),
     getResultsByCompetition(COMPETITIONS.SOS_GROUP_D),
+    getResultsByCompetition(COMPETITIONS.SOS_MAIN),
+    getResultsByCompetition(COMPETITIONS.SOS_MASTERS),
     getTableByCompetition(COMPETITIONS.TEAM_COMP),
     getTableByCompetition(COMPETITIONS.TEAM_COMP_WK2),
     getResultsByCompetition(COMPETITIONS.TEAM_COMP),
@@ -80,6 +84,8 @@ export default async function CompetitionsPage() {
 
       <CompetitionTabs
         sosGroups={sosGroups}
+        sosMainResults={sosMainResults}
+        sosMastersResults={sosMastersResults}
         competitions={competitions}
       />
     </div>

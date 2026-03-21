@@ -17,6 +17,10 @@ export const metadata: Metadata = {
   title: "Dumfries Pool League",
   description:
     "Official website of the Dumfries Pool League — fixtures, results, league table, and player stats.",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 const navLinks = [

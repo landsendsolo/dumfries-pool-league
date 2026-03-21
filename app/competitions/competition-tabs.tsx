@@ -17,7 +17,9 @@ interface CompetitionSection {
 }
 
 const tabs = [
-  { id: "sos", label: "South of Scotland" },
+  { id: "sos-teams", label: "SoS Teams" },
+  { id: "sos-singles", label: "SoS Singles" },
+  { id: "sos-masters", label: "SoS Masters" },
   { id: "team-comp", label: "Team Competition" },
   { id: "team-comp-wk2", label: "Team Comp WK2" },
   { id: "friendly", label: "Friendly" },
@@ -25,12 +27,16 @@ const tabs = [
 
 export function CompetitionTabs({
   sosGroups,
+  sosMainResults,
+  sosMastersResults,
   competitions,
 }: {
   sosGroups: SoSGroup[];
+  sosMainResults: Result[];
+  sosMastersResults: Result[];
   competitions: CompetitionSection[];
 }) {
-  const [activeTab, setActiveTab] = useState("sos");
+  const [activeTab, setActiveTab] = useState("sos-teams");
 
   return (
     <div>
@@ -51,8 +57,26 @@ export function CompetitionTabs({
         ))}
       </div>
 
-      {/* South of Scotland */}
-      {activeTab === "sos" && <SoSContent groups={sosGroups} />}
+      {/* South of Scotland Teams */}
+      {activeTab === "sos-teams" && <SoSTeamsContent groups={sosGroups} />}
+
+      {/* South of Scotland Singles */}
+      {activeTab === "sos-singles" && (
+        <KnockoutContent
+          title="South of Scotland Main Event (Singles)"
+          description="February 2026 &middot; Individual knockout tournament"
+          results={sosMainResults}
+        />
+      )}
+
+      {/* South of Scotland Masters */}
+      {activeTab === "sos-masters" && (
+        <KnockoutContent
+          title="South of Scotland Masters Event"
+          description="February 2026 &middot; Individual knockout tournament"
+          results={sosMastersResults}
+        />
+      )}
 
       {/* Other competitions */}
       {competitions.map(
@@ -70,10 +94,10 @@ export function CompetitionTabs({
   );
 }
 
-function SoSContent({ groups }: { groups: SoSGroup[] }) {
+function SoSTeamsContent({ groups }: { groups: SoSGroup[] }) {
   const allResults = groups.flatMap((g) => g.results);
 
-  // Find top performers across all groups (most wins)
+  // Find top performers across all groups (most points)
   const teamWins: Record<string, { won: number; played: number; points: number }> = {};
   for (const group of groups) {
     for (const team of group.standings) {
@@ -173,6 +197,155 @@ function SoSContent({ groups }: { groups: SoSGroup[] }) {
         <div>
           <h3 className="text-lg font-bold text-white mb-4">All Results</h3>
           <ResultsList results={allResults} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function KnockoutContent({
+  title,
+  description,
+  results,
+}: {
+  title: string;
+  description: string;
+  results: Result[];
+}) {
+  // Determine the winner (last result in the tournament is the final)
+  const finalMatch = results.length > 0 ? results[0] : null;
+  let winner = "";
+  if (finalMatch?.score) {
+    const parts = finalMatch.score.split("-").map((s) => parseInt(s.trim()));
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      winner = parts[0] > parts[1] ? finalMatch.home : finalMatch.away;
+    }
+  }
+
+  // Group results by round (date + time acts as round indicator)
+  const grouped: Record<string, Result[]> = {};
+  for (const r of results) {
+    const key = `${r.date} ${r.time}`;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(r);
+  }
+  const rounds = Object.entries(grouped);
+
+  // Assign round labels based on number of matches
+  const labeledRounds = rounds.map(([key, matches]) => {
+    let label = key;
+    if (matches.length === 1) label = "Final";
+    else if (matches.length === 2) label = "Semi-Finals";
+    else if (matches.length === 4) label = "Quarter-Finals";
+    else if (matches.length === 8) label = "Round of 16";
+    else if (matches.length === 16) label = "Round of 32";
+    else label = `Round (${key})`;
+    return { label, matches, key };
+  });
+
+  return (
+    <div>
+      {/* Event header */}
+      <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-6 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center">
+            <svg
+              className="w-5 h-5 text-gold"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-white">{title}</h2>
+            <p
+              className="text-gray-400 text-sm"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Winner banner */}
+      {winner && (
+        <div className="bg-gold/10 border border-gold/30 rounded-xl p-6 mb-8 text-center">
+          <span className="text-xs text-gold font-bold uppercase tracking-wider block mb-1">
+            Champion
+          </span>
+          <p className="text-white font-bold text-2xl">{winner}</p>
+          {finalMatch && (
+            <p className="text-gray-400 text-sm mt-1">
+              defeated{" "}
+              {winner === finalMatch.home ? finalMatch.away : finalMatch.home}{" "}
+              {finalMatch.score} in the Final
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Results by round */}
+      {results.length === 0 ? (
+        <div className="bg-navy-light/50 border border-gold/10 rounded-xl p-8 text-center">
+          <p className="text-gray-400 text-sm">No results available yet.</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {labeledRounds.map(({ label, matches, key }) => (
+            <div key={key}>
+              <h3 className="text-sm font-bold text-gold uppercase tracking-wider mb-3">
+                {label}
+              </h3>
+              <div className="space-y-2">
+                {matches.map((r, i) => {
+                  const parts = r.score
+                    .split("-")
+                    .map((s) => parseInt(s.trim()));
+                  const homeWon =
+                    parts.length === 2 &&
+                    !isNaN(parts[0]) &&
+                    !isNaN(parts[1]) &&
+                    parts[0] > parts[1];
+                  const awayWon =
+                    parts.length === 2 &&
+                    !isNaN(parts[0]) &&
+                    !isNaN(parts[1]) &&
+                    parts[1] > parts[0];
+
+                  return (
+                    <div
+                      key={i}
+                      className="bg-navy-light/50 border border-gold/10 rounded-lg p-3 flex items-center justify-between"
+                    >
+                      <span
+                        className={`font-medium text-sm flex-1 truncate ${
+                          homeWon ? "text-gold" : "text-white"
+                        }`}
+                      >
+                        {r.home}
+                      </span>
+                      <span className="text-gold font-bold px-3 text-sm bg-navy/60 rounded py-1 mx-2 whitespace-nowrap">
+                        {r.score}
+                      </span>
+                      <span
+                        className={`font-medium text-sm flex-1 text-right truncate ${
+                          awayWon ? "text-gold" : "text-white"
+                        }`}
+                      >
+                        {r.away}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

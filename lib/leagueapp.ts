@@ -95,9 +95,12 @@ function cellText($: cheerio.CheerioAPI, cell: AnyNode): string {
 
 export const COMPETITIONS = {
   LEAGUE: 1065,
+  DUMFRIES_SINGLES: 1141,
   FRIENDLY: 1338,
   TEAM_COMP: 1359,
   TEAM_COMP_WK2: 1397,
+  SOS_MAIN: 1402,
+  SOS_MASTERS: 1403,
   SOS_GROUP_A: 1414,
   SOS_GROUP_B: 1415,
   SOS_GROUP_C: 1419,
