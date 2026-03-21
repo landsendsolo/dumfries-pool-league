@@ -1,65 +1,222 @@
-import Image from "next/image";
+import Link from "next/link";
+import {
+  getLeagueTable,
+  getFixtures,
+  getResults,
+} from "@/lib/leagueapp";
 
-export default function Home() {
+export default async function Home() {
+  const [table, fixtures, results] = await Promise.all([
+    getLeagueTable(),
+    getFixtures(),
+    getResults(),
+  ]);
+
+  const top5 = table.slice(0, 5);
+  const upcomingFixtures = fixtures.slice(0, 6);
+  const latestResults = results.slice(0, 6);
+  const totalTeams = table.length;
+  const totalMatchesPlayed = table.reduce((sum, t) => sum + t.played, 0) / 2;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div>
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-navy-dark via-navy to-navy-light overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gold rounded-full blur-3xl" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+          {/* Sponsor Banner */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-navy-light/60 border border-gold/30 rounded-lg px-6 py-3 flex items-center gap-3">
+              <span className="text-xs text-gray-400 uppercase tracking-wider">
+                Main Sponsor
+              </span>
+              <span className="text-gold font-bold text-lg sm:text-xl">
+                MKM Dumfries Timber
+              </span>
+            </div>
+          </div>
+
+          <h1 className="text-4xl sm:text-6xl font-bold text-center text-white mb-4">
+            Dumfries <span className="text-gold">Pool League</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-center text-gray-400 text-lg max-w-2xl mx-auto mb-10">
+            The home of competitive pool in Dumfries. Live standings, fixtures,
+            results, and player stats all in one place.
           </p>
+
+          {/* Stats Bar */}
+          <div className="flex justify-center gap-8 sm:gap-16">
+            <div className="text-center">
+              <p className="text-3xl sm:text-4xl font-bold text-gold">
+                {totalTeams}
+              </p>
+              <p className="text-gray-400 text-sm mt-1">Teams</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl sm:text-4xl font-bold text-gold">
+                {totalMatchesPlayed}
+              </p>
+              <p className="text-gray-400 text-sm mt-1">Matches Played</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl sm:text-4xl font-bold text-gold">
+                {upcomingFixtures.length}
+              </p>
+              <p className="text-gray-400 text-sm mt-1">Upcoming</p>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </section>
+
+      {/* League Table Preview */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-white">League Standings</h2>
+          <Link
+            href="/table"
+            className="text-gold hover:text-gold-light text-sm font-medium transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            View Full Table →
+          </Link>
         </div>
-      </main>
+        <div className="bg-navy-light/50 border border-gold/10 rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gold/10 text-gray-400 text-xs uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left">#</th>
+                  <th className="px-4 py-3 text-left">Team</th>
+                  <th className="px-4 py-3 text-center">P</th>
+                  <th className="px-4 py-3 text-center">W</th>
+                  <th className="px-4 py-3 text-center">D</th>
+                  <th className="px-4 py-3 text-center">L</th>
+                  <th className="px-4 py-3 text-center">Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {top5.map((team, i) => (
+                  <tr
+                    key={team.name}
+                    className="border-b border-navy/50 hover:bg-navy-light/70 transition-colors"
+                  >
+                    <td className="px-4 py-3 text-gold font-bold">{i + 1}</td>
+                    <td className="px-4 py-3 font-medium text-white">
+                      {team.name}
+                    </td>
+                    <td className="px-4 py-3 text-center text-gray-300">
+                      {team.played}
+                    </td>
+                    <td className="px-4 py-3 text-center text-gray-300">
+                      {team.won}
+                    </td>
+                    <td className="px-4 py-3 text-center text-gray-300">
+                      {team.drawn}
+                    </td>
+                    <td className="px-4 py-3 text-center text-gray-300">
+                      {team.lost}
+                    </td>
+                    <td className="px-4 py-3 text-center font-bold text-gold">
+                      {team.points}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Fixtures & Results Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Upcoming Fixtures */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">
+                Upcoming Fixtures
+              </h2>
+              <Link
+                href="/fixtures"
+                className="text-gold hover:text-gold-light text-sm font-medium transition-colors"
+              >
+                View All →
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {upcomingFixtures.length === 0 && (
+                <p className="text-gray-500 text-sm">
+                  No upcoming fixtures scheduled.
+                </p>
+              )}
+              {upcomingFixtures.map((f, i) => (
+                <div
+                  key={i}
+                  className="bg-navy-light/50 border border-gold/10 rounded-lg p-4"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-gray-400">{f.date}</span>
+                    <span className="text-xs text-gray-500">{f.time}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium text-sm">
+                      {f.home}
+                    </span>
+                    <span className="text-gold text-xs font-bold px-2">vs</span>
+                    <span className="text-white font-medium text-sm text-right">
+                      {f.away}
+                    </span>
+                  </div>
+                  {f.venue && (
+                    <p className="text-xs text-gray-500 mt-2">{f.venue}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Latest Results */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Latest Results</h2>
+              <Link
+                href="/results"
+                className="text-gold hover:text-gold-light text-sm font-medium transition-colors"
+              >
+                View All →
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {latestResults.length === 0 && (
+                <p className="text-gray-500 text-sm">No results available.</p>
+              )}
+              {latestResults.map((r, i) => (
+                <div
+                  key={i}
+                  className="bg-navy-light/50 border border-gold/10 rounded-lg p-4"
+                >
+                  <span className="text-xs text-gray-400 block mb-2">
+                    {r.date}
+                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium text-sm flex-1">
+                      {r.home}
+                    </span>
+                    <span className="text-gold font-bold px-3 text-sm bg-navy/60 rounded py-1">
+                      {r.score}
+                    </span>
+                    <span className="text-white font-medium text-sm flex-1 text-right">
+                      {r.away}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
