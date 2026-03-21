@@ -119,7 +119,7 @@ export async function getLeagueTable(): Promise<TeamStanding[]> {
 }
 
 export async function getFixtures(): Promise<Fixture[]> {
-  const html = await fetchPage("fixture3.php");
+  const html = await fetchPage("fixture3.php", "&sel_competition=1065");
   const $ = cheerio.load(html);
   const fixtures: Fixture[] = [];
 
@@ -143,7 +143,7 @@ export async function getFixtures(): Promise<Fixture[]> {
 }
 
 export async function getResults(): Promise<Result[]> {
-  const html = await fetchPage("results.php");
+  const html = await fetchPage("results.php", "&sel_competition=1065");
   const $ = cheerio.load(html);
   const results: Result[] = [];
 
