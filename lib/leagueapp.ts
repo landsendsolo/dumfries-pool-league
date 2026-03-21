@@ -242,7 +242,7 @@ export async function getResults(): Promise<Result[]> {
 }
 
 export async function getPlayerStats(): Promise<PlayerStat[]> {
-  const html = await fetchPage("stats11.php");
+  const html = await fetchPage("stats11.php", "&sel_competition=1065");
   const $ = cheerio.load(html);
   const players: PlayerStat[] = [];
 
