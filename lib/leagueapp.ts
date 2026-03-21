@@ -53,12 +53,9 @@ export interface PlayerStat {
   team: string;
   played: number;
   won: number;
-  wonLag: number;
   breakDishesFor: number;
   breakDishesAgainst: number;
-  forfeited: number;
   percentage: string;
-  points: number;
 }
 
 export interface Venue {
@@ -259,12 +256,9 @@ export async function getPlayerStats(): Promise<PlayerStat[]> {
       team: cellText($, cells[5]),
       played: parseInt(cellText($, cells[6])) || 0,
       won: parseInt(cellText($, cells[7])) || 0,
-      wonLag: parseInt(cellText($, cells[8])) || 0,
       breakDishesFor: parseInt(cellText($, cells[9])) || 0,
       breakDishesAgainst: parseInt(cellText($, cells[10])) || 0,
-      forfeited: parseInt(cellText($, cells[11])) || 0,
       percentage: cellText($, cells[12]),
-      points: parseInt(cellText($, cells[7])) || 0, // points = wins (1 point per win)
     });
   });
 

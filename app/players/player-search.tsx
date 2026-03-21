@@ -34,12 +34,9 @@ export function PlayerSearch({ players }: { players: PlayerStat[] }) {
               <th className="px-2 sm:px-4 py-3 text-left hidden sm:table-cell">Team</th>
               <th className="px-2 sm:px-4 py-3 text-center">P</th>
               <th className="px-2 sm:px-4 py-3 text-center">W</th>
-              <th className="px-2 sm:px-4 py-3 text-center hidden sm:table-cell">Won Lag</th>
               <th className="px-2 sm:px-4 py-3 text-center hidden sm:table-cell">BD For</th>
               <th className="px-2 sm:px-4 py-3 text-center hidden sm:table-cell">BD Agst</th>
-              <th className="px-2 sm:px-4 py-3 text-center hidden sm:table-cell">Forf.</th>
               <th className="px-2 sm:px-4 py-3 text-center">Win %</th>
-              <th className="px-2 sm:px-4 py-3 text-center">Pts</th>
             </tr>
           </thead>
           <tbody>
@@ -61,29 +58,20 @@ export function PlayerSearch({ players }: { players: PlayerStat[] }) {
                   {p.won}
                 </td>
                 <td className="px-2 sm:px-4 py-3 text-center text-gray-300 hidden sm:table-cell">
-                  {p.wonLag}
-                </td>
-                <td className="px-2 sm:px-4 py-3 text-center text-gray-300 hidden sm:table-cell">
                   {p.breakDishesFor}
                 </td>
                 <td className="px-2 sm:px-4 py-3 text-center text-gray-300 hidden sm:table-cell">
                   {p.breakDishesAgainst}
                 </td>
-                <td className="px-2 sm:px-4 py-3 text-center text-gray-300 hidden sm:table-cell">
-                  {p.forfeited}
-                </td>
                 <td className="px-2 sm:px-4 py-3 text-center font-medium text-gold">
                   {p.percentage}
-                </td>
-                <td className="px-2 sm:px-4 py-3 text-center font-bold text-gold">
-                  {p.points}
                 </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
                 <td
-                  colSpan={10}
+                  colSpan={7}
                   className="px-4 py-8 text-center text-gray-500"
                 >
                   No players found matching &ldquo;{query}&rdquo;
