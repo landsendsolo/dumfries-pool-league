@@ -1,12 +1,41 @@
-import { getVenues } from "@/lib/leagueapp";
-
 export const metadata = {
   title: "Venues | Dumfries Pool League",
 };
 
-export default async function VenuesPage() {
-  const venues = await getVenues();
+const venues = [
+  {
+    name: "Abbey Inn",
+    address: "Abbey Lane, Lincluden",
+    town: "Dumfries",
+    postcode: "DG2 0DQ",
+  },
+  {
+    name: "Lochside Tavern",
+    address: "Carrick Road",
+    town: "Dumfries",
+    postcode: "DG2 9PR",
+  },
+  {
+    name: "The Pleuchie's Howff",
+    address: "97 Annan Road",
+    town: "Dumfries",
+    postcode: "DG1 3EW",
+  },
+  {
+    name: "Normandy Bar",
+    address: "156 Troqueer Road",
+    town: "Dumfries",
+    postcode: "DG2 7DF",
+  },
+  {
+    name: "The Coachman Bar",
+    address: "2-3 High Street",
+    town: "Moffat",
+    postcode: "DG10 9ET",
+  },
+];
 
+export default function VenuesPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
       <div className="mb-8">
@@ -16,16 +45,10 @@ export default async function VenuesPage() {
         </p>
       </div>
 
-      {venues.length === 0 && (
-        <p className="text-center text-gray-500 py-12">
-          No venue data available.
-        </p>
-      )}
-
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {venues.map((venue, i) => (
+        {venues.map((venue) => (
           <div
-            key={i}
+            key={venue.name}
             className="bg-navy-light/50 border border-gold/10 rounded-xl p-5 hover:border-gold/30 transition-colors"
           >
             <div className="flex items-start gap-3">
@@ -54,9 +77,12 @@ export default async function VenuesPage() {
                 <h3 className="text-white font-semibold text-sm">
                   {venue.name}
                 </h3>
-                {venue.address && (
-                  <p className="text-gray-400 text-xs mt-1">{venue.address}</p>
-                )}
+                <p className="text-gray-400 text-xs mt-1">
+                  {venue.address}
+                </p>
+                <p className="text-gray-400 text-xs">
+                  {venue.town}, {venue.postcode}
+                </p>
               </div>
             </div>
           </div>
