@@ -50,6 +50,7 @@ export interface Result {
 export interface PlayerStat {
   forename: string;
   surname: string;
+  team: string;
   played: number;
   won: number;
   wonLag: number;
@@ -242,24 +243,28 @@ export async function getResults(): Promise<Result[]> {
 }
 
 export async function getPlayerStats(): Promise<PlayerStat[]> {
-  const html = await fetchPage("stats11.php", "&sel_competition=1065");
+  const html = await fetchPage("stats1.php", "&sel_competition=1065");
   const $ = cheerio.load(html);
   const players: PlayerStat[] = [];
 
+  // stats1.php columns: 0=Forename, 1=Surname, 2=Handicap, 3=Competition,
+  // 4=Division, 5=Team, 6=Played, 7=Won, 8=Won Lag, 9=BD For,
+  // 10=BD Against, 11=Forfeited, 12=Percentage, 13=Points
   $("#top__contentTable tbody tr.dg_tr").each((_, row) => {
     const cells = $(row).find("td.x-blue_dg_td").toArray();
-    if (cells.length < 10) return;
+    if (cells.length < 14) return;
     players.push({
       forename: cellText($, cells[0]),
       surname: cellText($, cells[1]),
-      played: parseInt(cellText($, cells[2])) || 0,
-      won: parseInt(cellText($, cells[3])) || 0,
-      wonLag: parseInt(cellText($, cells[4])) || 0,
-      breakDishesFor: parseInt(cellText($, cells[5])) || 0,
-      breakDishesAgainst: parseInt(cellText($, cells[6])) || 0,
-      forfeited: parseInt(cellText($, cells[7])) || 0,
-      percentage: cellText($, cells[8]),
-      points: parseInt(cellText($, cells[3])) || 0, // points = wins (1 point per win)
+      team: cellText($, cells[5]),
+      played: parseInt(cellText($, cells[6])) || 0,
+      won: parseInt(cellText($, cells[7])) || 0,
+      wonLag: parseInt(cellText($, cells[8])) || 0,
+      breakDishesFor: parseInt(cellText($, cells[9])) || 0,
+      breakDishesAgainst: parseInt(cellText($, cells[10])) || 0,
+      forfeited: parseInt(cellText($, cells[11])) || 0,
+      percentage: cellText($, cells[12]),
+      points: parseInt(cellText($, cells[7])) || 0, // points = wins (1 point per win)
     });
   });
 

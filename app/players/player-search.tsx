@@ -7,8 +7,8 @@ export function PlayerSearch({ players }: { players: PlayerStat[] }) {
   const [query, setQuery] = useState("");
 
   const filtered = players.filter((p) => {
-    const name = `${p.forename} ${p.surname}`.toLowerCase();
-    return name.includes(query.toLowerCase());
+    const text = `${p.forename} ${p.surname} ${p.team}`.toLowerCase();
+    return text.includes(query.toLowerCase());
   });
 
   return (
@@ -31,6 +31,7 @@ export function PlayerSearch({ players }: { players: PlayerStat[] }) {
           <thead>
             <tr className="border-b border-gold/20 text-gray-400 text-xs uppercase tracking-wider bg-navy-dark/50">
               <th className="px-3 sm:px-4 py-3 text-left">Player</th>
+              <th className="px-2 sm:px-4 py-3 text-left hidden sm:table-cell">Team</th>
               <th className="px-2 sm:px-4 py-3 text-center">P</th>
               <th className="px-2 sm:px-4 py-3 text-center">W</th>
               <th className="px-2 sm:px-4 py-3 text-center hidden sm:table-cell">Won Lag</th>
@@ -49,6 +50,9 @@ export function PlayerSearch({ players }: { players: PlayerStat[] }) {
               >
                 <td className="px-3 sm:px-4 py-3 font-medium text-white whitespace-nowrap text-xs sm:text-sm">
                   {p.forename} {p.surname}
+                </td>
+                <td className="px-2 sm:px-4 py-3 text-gray-300 text-xs sm:text-sm hidden sm:table-cell">
+                  {p.team}
                 </td>
                 <td className="px-2 sm:px-4 py-3 text-center text-gray-300">
                   {p.played}
@@ -79,7 +83,7 @@ export function PlayerSearch({ players }: { players: PlayerStat[] }) {
             {filtered.length === 0 && (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={10}
                   className="px-4 py-8 text-center text-gray-500"
                 >
                   No players found matching &ldquo;{query}&rdquo;
