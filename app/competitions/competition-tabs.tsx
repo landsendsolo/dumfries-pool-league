@@ -65,13 +65,13 @@ export function CompetitionTabs({
 
   return (
     <div>
-      {/* Tab bar */}
-      <div className="flex gap-1 mb-8 overflow-x-auto pb-1">
+      {/* Tab bar - scrollable on mobile, no page-wide scroll */}
+      <div className="flex gap-1 mb-6 sm:mb-8 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
         {visibleTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
+            className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
               activeTab === tab.id
                 ? "bg-gold text-navy"
                 : "bg-navy-light/50 text-gray-400 hover:text-white border border-gold/10"
@@ -140,9 +140,9 @@ function SoSTeamsContent({ groups }: { groups: SoSGroup[] }) {
   return (
     <div>
       {/* Event header */}
-      <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-6 mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center">
+      <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center shrink-0">
             <svg
               className="w-5 h-5 text-gold"
               fill="none"
@@ -158,10 +158,10 @@ function SoSTeamsContent({ groups }: { groups: SoSGroup[] }) {
             </svg>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-lg sm:text-xl font-bold text-white">
               South of Scotland Team Event
             </h2>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-xs sm:text-sm">
               February 2026 &middot; 4 Groups &middot;{" "}
               {groups.reduce((sum, g) => sum + g.standings.length, 0)} Teams
             </p>
@@ -171,17 +171,17 @@ function SoSTeamsContent({ groups }: { groups: SoSGroup[] }) {
 
       {/* Top performers */}
       {topTeams.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <h3 className="text-lg font-bold text-white mb-4">
             Top Performers
           </h3>
-          <div className="grid sm:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
             {topTeams.map(([name, stats], i) => (
               <div
                 key={name}
-                className={`rounded-lg p-4 text-center border ${
+                className={`rounded-lg p-3 sm:p-4 text-center border ${
                   i === 0
-                    ? "bg-gold/10 border-gold/30"
+                    ? "bg-gold/10 border-gold/30 col-span-2 sm:col-span-1"
                     : "bg-navy-light/50 border-gold/10"
                 }`}
               >
@@ -192,10 +192,10 @@ function SoSTeamsContent({ groups }: { groups: SoSGroup[] }) {
                 >
                   #{i + 1}
                 </span>
-                <p className="text-white font-semibold text-sm truncate">
+                <p className="text-white font-semibold text-xs sm:text-sm truncate">
                   {name}
                 </p>
-                <p className="text-gold font-bold text-lg">{stats.points} pts</p>
+                <p className="text-gold font-bold text-base sm:text-lg">{stats.points} pts</p>
                 <p className="text-gray-400 text-xs">
                   {stats.won}W / {stats.played}P
                 </p>
@@ -206,10 +206,10 @@ function SoSTeamsContent({ groups }: { groups: SoSGroup[] }) {
       )}
 
       {/* Group tables */}
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      <div className="grid md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {groups.map((group) => (
           <div key={group.label}>
-            <h3 className="text-lg font-bold text-white mb-3">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-3">
               {group.label}
             </h3>
             <StandingsTable standings={group.standings} compact />
@@ -271,9 +271,9 @@ function KnockoutContent({
   return (
     <div>
       {/* Event header */}
-      <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-6 mb-8">
+      <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center shrink-0">
             <svg
               className="w-5 h-5 text-gold"
               fill="none"
@@ -289,9 +289,9 @@ function KnockoutContent({
             </svg>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">{title}</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-white">{title}</h2>
             <p
-              className="text-gray-400 text-sm"
+              className="text-gray-400 text-xs sm:text-sm"
               dangerouslySetInnerHTML={{ __html: description }}
             />
           </div>
@@ -300,13 +300,13 @@ function KnockoutContent({
 
       {/* Winner banner */}
       {winner && (
-        <div className="bg-gold/10 border border-gold/30 rounded-xl p-6 mb-8 text-center">
+        <div className="bg-gold/10 border border-gold/30 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 text-center">
           <span className="text-xs text-gold font-bold uppercase tracking-wider block mb-1">
             Champion
           </span>
-          <p className="text-white font-bold text-2xl">{winner}</p>
+          <p className="text-white font-bold text-xl sm:text-2xl">{winner}</p>
           {finalMatch && (
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="text-gray-400 text-xs sm:text-sm mt-1">
               defeated{" "}
               {winner === finalMatch.home ? finalMatch.away : finalMatch.home}{" "}
               {finalMatch.score} in the Final
@@ -346,20 +346,20 @@ function KnockoutContent({
                   return (
                     <div
                       key={i}
-                      className="bg-navy-light/50 border border-gold/10 rounded-lg p-3 flex items-center justify-between"
+                      className="bg-navy-light/50 border border-gold/10 rounded-lg p-3 flex items-center justify-between min-w-0"
                     >
                       <span
-                        className={`font-medium text-sm flex-1 truncate ${
+                        className={`font-medium text-xs sm:text-sm flex-1 truncate ${
                           homeWon ? "text-gold" : "text-white"
                         }`}
                       >
                         {r.home}
                       </span>
-                      <span className="text-gold font-bold px-3 text-sm bg-navy/60 rounded py-1 mx-2 whitespace-nowrap">
+                      <span className="text-gold font-bold px-2 sm:px-3 text-sm bg-navy/60 rounded py-1 mx-1 sm:mx-2 whitespace-nowrap shrink-0">
                         {r.score}
                       </span>
                       <span
-                        className={`font-medium text-sm flex-1 text-right truncate ${
+                        className={`font-medium text-xs sm:text-sm flex-1 text-right truncate ${
                           awayWon ? "text-gold" : "text-white"
                         }`}
                       >
@@ -420,79 +420,77 @@ function StandingsTable({
 }) {
   return (
     <div className="bg-navy-light/50 border border-gold/10 rounded-xl overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gold/20 text-gray-400 text-xs uppercase tracking-wider bg-navy-dark/50">
-              <th className="px-3 py-2.5 text-left">Team</th>
-              <th className="px-2 py-2.5 text-center">P</th>
-              <th className="px-2 py-2.5 text-center">W</th>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-gold/20 text-gray-400 text-xs uppercase tracking-wider bg-navy-dark/50">
+            <th className="px-2 sm:px-3 py-2.5 text-left">Team</th>
+            <th className="px-1.5 sm:px-2 py-2.5 text-center">P</th>
+            <th className="px-1.5 sm:px-2 py-2.5 text-center">W</th>
+            {!compact && (
+              <>
+                <th className="px-1.5 sm:px-2 py-2.5 text-center hidden sm:table-cell">D</th>
+                <th className="px-1.5 sm:px-2 py-2.5 text-center hidden sm:table-cell">L</th>
+                <th className="px-1.5 sm:px-2 py-2.5 text-center hidden sm:table-cell">F</th>
+                <th className="px-1.5 sm:px-2 py-2.5 text-center hidden sm:table-cell">A</th>
+              </>
+            )}
+            <th className="px-1.5 sm:px-2 py-2.5 text-center">Diff</th>
+            <th className="px-1.5 sm:px-2 py-2.5 text-center">Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          {standings.map((team, i) => (
+            <tr
+              key={team.name}
+              className={`border-b border-navy/30 hover:bg-navy-light/70 transition-colors ${
+                i === 0 ? "bg-gold/5" : ""
+              }`}
+            >
+              <td className="px-2 sm:px-3 py-2.5 font-medium text-white whitespace-nowrap text-xs">
+                {team.name}
+              </td>
+              <td className="px-1.5 sm:px-2 py-2.5 text-center text-gray-300">
+                {team.played}
+              </td>
+              <td className="px-1.5 sm:px-2 py-2.5 text-center text-green-400">
+                {team.won}
+              </td>
               {!compact && (
                 <>
-                  <th className="px-2 py-2.5 text-center">D</th>
-                  <th className="px-2 py-2.5 text-center">L</th>
-                  <th className="px-2 py-2.5 text-center">F</th>
-                  <th className="px-2 py-2.5 text-center">A</th>
+                  <td className="px-1.5 sm:px-2 py-2.5 text-center text-gray-300 hidden sm:table-cell">
+                    {team.drawn}
+                  </td>
+                  <td className="px-1.5 sm:px-2 py-2.5 text-center text-gray-300 hidden sm:table-cell">
+                    {team.lost}
+                  </td>
+                  <td className="px-1.5 sm:px-2 py-2.5 text-center text-gray-300 hidden sm:table-cell">
+                    {team.for}
+                  </td>
+                  <td className="px-1.5 sm:px-2 py-2.5 text-center text-gray-300 hidden sm:table-cell">
+                    {team.against}
+                  </td>
                 </>
               )}
-              <th className="px-2 py-2.5 text-center">Diff</th>
-              <th className="px-2 py-2.5 text-center">Pts</th>
+              <td className="px-1.5 sm:px-2 py-2.5 text-center text-gray-300">
+                {team.diff}
+              </td>
+              <td className="px-1.5 sm:px-2 py-2.5 text-center font-bold text-gold">
+                {team.points}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {standings.map((team, i) => (
-              <tr
-                key={team.name}
-                className={`border-b border-navy/30 hover:bg-navy-light/70 transition-colors ${
-                  i === 0 ? "bg-gold/5" : ""
-                }`}
+          ))}
+          {standings.length === 0 && (
+            <tr>
+              <td
+                colSpan={compact ? 5 : 9}
+                className="px-3 py-6 text-center text-gray-500 text-sm"
               >
-                <td className="px-3 py-2.5 font-medium text-white whitespace-nowrap text-xs">
-                  {team.name}
-                </td>
-                <td className="px-2 py-2.5 text-center text-gray-300">
-                  {team.played}
-                </td>
-                <td className="px-2 py-2.5 text-center text-green-400">
-                  {team.won}
-                </td>
-                {!compact && (
-                  <>
-                    <td className="px-2 py-2.5 text-center text-gray-300">
-                      {team.drawn}
-                    </td>
-                    <td className="px-2 py-2.5 text-center text-gray-300">
-                      {team.lost}
-                    </td>
-                    <td className="px-2 py-2.5 text-center text-gray-300">
-                      {team.for}
-                    </td>
-                    <td className="px-2 py-2.5 text-center text-gray-300">
-                      {team.against}
-                    </td>
-                  </>
-                )}
-                <td className="px-2 py-2.5 text-center text-gray-300">
-                  {team.diff}
-                </td>
-                <td className="px-2 py-2.5 text-center font-bold text-gold">
-                  {team.points}
-                </td>
-              </tr>
-            ))}
-            {standings.length === 0 && (
-              <tr>
-                <td
-                  colSpan={compact ? 5 : 9}
-                  className="px-3 py-6 text-center text-gray-500 text-sm"
-                >
-                  No data available
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                No data available
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -516,15 +514,15 @@ function ResultsList({ results }: { results: Result[] }) {
             {dateResults.map((r, i) => (
               <div
                 key={i}
-                className="bg-navy-light/50 border border-gold/10 rounded-lg p-3 flex items-center justify-between"
+                className="bg-navy-light/50 border border-gold/10 rounded-lg p-3 flex items-center justify-between min-w-0"
               >
-                <span className="text-white font-medium text-sm flex-1 truncate">
+                <span className="text-white font-medium text-xs sm:text-sm flex-1 truncate">
                   {r.home}
                 </span>
-                <span className="text-gold font-bold px-3 text-sm bg-navy/60 rounded py-1 mx-2 whitespace-nowrap">
+                <span className="text-gold font-bold px-2 sm:px-3 text-sm bg-navy/60 rounded py-1 mx-1 sm:mx-2 whitespace-nowrap shrink-0">
                   {r.score}
                 </span>
-                <span className="text-white font-medium text-sm flex-1 text-right truncate">
+                <span className="text-white font-medium text-xs sm:text-sm flex-1 text-right truncate">
                   {r.away}
                 </span>
               </div>

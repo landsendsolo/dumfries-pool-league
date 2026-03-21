@@ -53,18 +53,18 @@ export default async function CupPage() {
                   {match.round}
                 </span>
               )}
-              <div className="flex items-center justify-between">
-                <span className="text-white font-medium text-sm flex-1">
+              <div className="flex items-center justify-between min-w-0">
+                <span className="text-white font-medium text-xs sm:text-sm flex-1 truncate">
                   {match.home}
                 </span>
                 {match.score ? (
-                  <span className="text-gold font-bold px-4 text-sm bg-navy/60 rounded py-1 mx-2 whitespace-nowrap">
+                  <span className="text-gold font-bold px-2 sm:px-4 text-sm bg-navy/60 rounded py-1 mx-1 sm:mx-2 whitespace-nowrap shrink-0">
                     {match.score}
                   </span>
                 ) : (
-                  <span className="text-gold text-xs font-bold px-3">vs</span>
+                  <span className="text-gold text-xs font-bold px-2 sm:px-3 shrink-0">vs</span>
                 )}
-                <span className="text-white font-medium text-sm flex-1 text-right">
+                <span className="text-white font-medium text-xs sm:text-sm flex-1 text-right truncate">
                   {match.away}
                 </span>
               </div>

@@ -45,16 +45,16 @@ export default async function ResultsPage() {
               {grouped[date].map((r, i) => (
                 <div
                   key={i}
-                  className="bg-navy-light/50 border border-gold/10 rounded-lg p-4"
+                  className="bg-navy-light/50 border border-gold/10 rounded-lg p-3 sm:p-4"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-white font-medium text-sm flex-1">
+                  <div className="flex items-center justify-between min-w-0">
+                    <span className="text-white font-medium text-xs sm:text-sm flex-1 truncate">
                       {r.home}
                     </span>
-                    <span className="text-gold font-bold px-4 text-sm bg-navy/60 rounded py-1 mx-2 whitespace-nowrap">
+                    <span className="text-gold font-bold px-2 sm:px-4 text-sm bg-navy/60 rounded py-1 mx-1 sm:mx-2 whitespace-nowrap shrink-0">
                       {r.score}
                     </span>
-                    <span className="text-white font-medium text-sm flex-1 text-right">
+                    <span className="text-white font-medium text-xs sm:text-sm flex-1 text-right truncate">
                       {r.away}
                     </span>
                   </div>
