@@ -25,6 +25,11 @@ const tabs = [
   { id: "friendly", label: "Friendly" },
 ];
 
+function hasData(standings: TeamStanding[], results: Result[]): boolean {
+  if (results.length > 0) return true;
+  return standings.some((t) => t.played > 0 || t.points > 0);
+}
+
 export function CompetitionTabs({
   sosGroups,
   sosMainResults,
@@ -36,13 +41,33 @@ export function CompetitionTabs({
   sosMastersResults: Result[];
   competitions: CompetitionSection[];
 }) {
-  const [activeTab, setActiveTab] = useState("sos-teams");
+  const sosTeamsHasData = sosGroups.some((g) => hasData(g.standings, g.results));
+
+  const visibleTabs = tabs.filter((tab) => {
+    if (tab.id === "sos-teams") return sosTeamsHasData;
+    if (tab.id === "sos-singles") return sosMainResults.length > 0;
+    if (tab.id === "sos-masters") return sosMastersResults.length > 0;
+    const comp = competitions.find((c) => c.id === tab.id);
+    if (comp) return hasData(comp.standings, comp.results);
+    return false;
+  });
+
+  const firstTab = visibleTabs[0]?.id ?? "";
+  const [activeTab, setActiveTab] = useState(firstTab);
+
+  if (visibleTabs.length === 0) {
+    return (
+      <div className="bg-navy-light/50 border border-gold/10 rounded-xl p-12 text-center">
+        <p className="text-gray-400">No competition data available yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
       {/* Tab bar */}
       <div className="flex gap-1 mb-8 overflow-x-auto pb-1">
-        {tabs.map((tab) => (
+        {visibleTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
