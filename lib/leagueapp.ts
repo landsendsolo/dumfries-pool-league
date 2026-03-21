@@ -259,7 +259,7 @@ export async function getPlayerStats(): Promise<PlayerStat[]> {
       breakDishesAgainst: parseInt(cellText($, cells[6])) || 0,
       forfeited: parseInt(cellText($, cells[7])) || 0,
       percentage: cellText($, cells[8]),
-      points: parseInt(cellText($, cells[9])) || 0,
+      points: parseInt(cellText($, cells[3])) || 0, // points = wins (1 point per win)
     });
   });
 
