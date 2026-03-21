@@ -25,6 +25,7 @@ const navLinks = [
   { href: "/fixtures", label: "Fixtures" },
   { href: "/results", label: "Results" },
   { href: "/players", label: "Players" },
+  { href: "/competitions", label: "Competitions" },
   { href: "/venues", label: "Venues" },
   { href: "/cup", label: "Cup" },
 ];

@@ -91,6 +91,79 @@ function cellText($: cheerio.CheerioAPI, cell: AnyNode): string {
   return $cell.text().trim();
 }
 
+// ─── Competition IDs ─────────────────────────────────────────────────
+
+export const COMPETITIONS = {
+  LEAGUE: 1065,
+  FRIENDLY: 1338,
+  TEAM_COMP: 1359,
+  TEAM_COMP_WK2: 1397,
+  SOS_GROUP_A: 1414,
+  SOS_GROUP_B: 1415,
+  SOS_GROUP_C: 1419,
+  SOS_GROUP_D: 1420,
+} as const;
+
+// ─── Generic fetchers by competition ID ──────────────────────────────
+
+export async function getTableByCompetition(
+  competitionId: number,
+): Promise<TeamStanding[]> {
+  const html = await fetchPage(
+    "table1.php",
+    `&sel_competition=${competitionId}`,
+  );
+  const $ = cheerio.load(html);
+  const teams: TeamStanding[] = [];
+
+  $("#top__contentTable tbody tr.dg_tr").each((_, row) => {
+    const cells = $(row).find("td.x-blue_dg_td").toArray();
+    if (cells.length < 10) return;
+    teams.push({
+      name: cellText($, cells[0]),
+      played: parseInt(cellText($, cells[1])) || 0,
+      won: parseInt(cellText($, cells[2])) || 0,
+      drawn: parseInt(cellText($, cells[3])) || 0,
+      lost: parseInt(cellText($, cells[4])) || 0,
+      for: parseInt(cellText($, cells[5])) || 0,
+      against: parseInt(cellText($, cells[6])) || 0,
+      diff: parseInt(cellText($, cells[7])) || 0,
+      bonus: parseInt(cellText($, cells[8])) || 0,
+      points: parseInt(cellText($, cells[9])) || 0,
+    });
+  });
+
+  return teams;
+}
+
+export async function getResultsByCompetition(
+  competitionId: number,
+): Promise<Result[]> {
+  const html = await fetchPage(
+    "results.php",
+    `&sel_competition=${competitionId}`,
+  );
+  const $ = cheerio.load(html);
+  const results: Result[] = [];
+
+  $("#printableArea table tr").each((i, row) => {
+    if (i === 0) return;
+    const cells = $(row).find("td");
+    if (cells.length < 5) return;
+    const date = $(cells[0]).text().trim();
+    if (!date) return;
+    results.push({
+      date,
+      time: $(cells[1]).text().trim(),
+      home: $(cells[2]).text().trim(),
+      score: $(cells[3]).text().trim(),
+      away: $(cells[4]).text().trim(),
+    });
+  });
+
+  return results.reverse();
+}
+
 // ─── Parsers ────────────────────────────────────────────────────────
 
 export async function getLeagueTable(): Promise<TeamStanding[]> {
