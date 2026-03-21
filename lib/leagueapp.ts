@@ -162,7 +162,7 @@ export async function getResults(): Promise<Result[]> {
     });
   });
 
-  return results;
+  return results.reverse();
 }
 
 export async function getPlayerStats(): Promise<PlayerStat[]> {
