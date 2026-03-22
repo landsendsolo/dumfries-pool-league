@@ -10,6 +10,13 @@ const documents = [
     file: "/blackball-rules.pdf",
     label: "Download PDF",
   },
+  {
+    title: "League Constitution",
+    description:
+      "The official constitution of the Dumfries Pool League governing rules, membership and conduct",
+    file: "/constitution.pdf",
+    label: "Download PDF",
+  },
 ];
 
 export default function DocumentsPage() {
