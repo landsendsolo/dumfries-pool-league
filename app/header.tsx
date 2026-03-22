@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/competitions", label: "Competitions" },
   { href: "/venues", label: "Venues" },
   { href: "/cup", label: "Cup" },
+  { href: "/documents", label: "Documents" },
 ];
 
 export function Header() {
