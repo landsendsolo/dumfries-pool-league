@@ -39,6 +39,38 @@ export default function RootLayout({
         {/* Main Content */}
         <main className="flex-1">{children}</main>
 
+        {/* Sponsors Strip */}
+        <section className="bg-[#0a1220] border-t border-gold/10 py-3 px-4 sm:px-6">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span className="text-[10px] text-gold uppercase tracking-widest font-semibold shrink-0">
+              Our Sponsors
+            </span>
+            {[
+              "MKM Dumfries Timber",
+              "JJ Plumbing & Bathrooms",
+              "Abbey Inn",
+              "N Dulge",
+              "Solway Fitness",
+              "JLW Joinery",
+              "GH Gardening and Labouring Services",
+              "Jayde Devlin Steel Framed Buildings",
+            ].map((name) => (
+              <span
+                key={name}
+                className="text-xs text-gray-300 bg-navy-light/60 border border-gold/20 rounded-full px-3 py-0.5 whitespace-nowrap"
+              >
+                {name}
+              </span>
+            ))}
+            <a
+              href="/sponsors"
+              className="text-xs text-gold hover:underline shrink-0 ml-1"
+            >
+              Become a Sponsor →
+            </a>
+          </div>
+        </section>
+
         {/* Footer */}
         <footer className="bg-navy-dark border-t border-gold/10 py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
