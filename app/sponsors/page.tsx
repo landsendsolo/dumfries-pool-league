@@ -1,6 +1,9 @@
-export const metadata = {
-  title: "Sponsors | Dumfries Pool League",
-};
+"use client";
+
+import { useState } from "react";
+import type { FormEvent } from "react";
+
+const FORMSPREE_URL = "https://formspree.io/f/REPLACE_SPONSOR_ID";
 
 const sponsors = [
   {
@@ -53,7 +56,35 @@ const sponsors = [
   },
 ];
 
+type FormStatus = "idle" | "submitting" | "success" | "error";
+
 export default function SponsorsPage() {
+  const [status, setStatus] = useState<FormStatus>("idle");
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("submitting");
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        setStatus("success");
+        form.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
       <div className="mb-8">
@@ -106,30 +137,103 @@ export default function SponsorsPage() {
       {/* Become a Sponsor */}
       <div className="mt-12 bg-navy-light/40 border border-gold/20 rounded-xl p-6 sm:p-8">
         <h2 className="text-xl font-bold text-white mb-2">Become a Sponsor</h2>
-        <p className="text-gray-400 text-sm leading-relaxed max-w-xl">
+        <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-6">
           Interested in sponsoring the Dumfries Pool League? Get in touch to
           find out about our sponsorship opportunities and help support pool in
           Dumfries.
         </p>
-        <a
-          href="mailto:dumfriespoolleague@gmail.com"
-          className="inline-flex items-center gap-2 mt-4 bg-gold/10 hover:bg-gold/20 border border-gold/30 hover:border-gold/50 text-gold text-sm font-medium rounded-lg px-4 py-2.5 transition-colors"
-        >
-          <svg
-            className="w-4 h-4 shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-          dumfriespoolleague@gmail.com
-        </a>
+
+        {status === "success" ? (
+          <div className="bg-green-900/30 border border-green-500/30 rounded-lg p-4 text-green-400 text-sm">
+            Thanks for your interest! We&apos;ll be in touch soon.
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="sp_name" className="block text-xs text-gray-400 mb-1">
+                  Full Name <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="sp_name"
+                  name="name"
+                  required
+                  className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
+                  placeholder="Your name"
+                />
+              </div>
+              <div>
+                <label htmlFor="sp_business" className="block text-xs text-gray-400 mb-1">
+                  Business Name <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="sp_business"
+                  name="business"
+                  required
+                  className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
+                  placeholder="Business name"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="sp_email" className="block text-xs text-gray-400 mb-1">
+                  Email <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="sp_email"
+                  name="email"
+                  required
+                  className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
+                  placeholder="your@email.com"
+                />
+              </div>
+              <div>
+                <label htmlFor="sp_phone" className="block text-xs text-gray-400 mb-1">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  id="sp_phone"
+                  name="phone"
+                  className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="sp_message" className="block text-xs text-gray-400 mb-1">
+                Message
+              </label>
+              <textarea
+                id="sp_message"
+                name="message"
+                rows={4}
+                className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors resize-none"
+                placeholder="Tell us about your sponsorship interest (optional)"
+              />
+            </div>
+
+            {status === "error" && (
+              <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm">
+                Something went wrong. Please try again.
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={status === "submitting"}
+              className="w-full sm:w-auto bg-gold text-navy font-bold text-sm px-6 py-3 rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-60 cursor-pointer"
+            >
+              {status === "submitting" ? "Sending..." : "Send Sponsorship Enquiry"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

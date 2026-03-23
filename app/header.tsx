@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 type NavItem =
@@ -101,9 +102,13 @@ export function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0" onClick={closeAll}>
-            <div className="w-8 h-8 bg-gold rounded-full flex items-center justify-center">
-              <span className="text-navy font-bold text-sm">DPL</span>
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Dumfries Pool League"
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
             <span className="text-gold font-bold text-lg hidden sm:block">
               Dumfries Pool League
             </span>
@@ -168,6 +173,15 @@ export function Header() {
                 </div>
               );
             })}
+
+            {/* Join CTA */}
+            <Link
+              href="/join"
+              onClick={closeAll}
+              className="ml-2 px-4 py-1.5 text-sm font-bold bg-gold text-navy rounded-lg hover:bg-gold/90 transition-colors"
+            >
+              Join
+            </Link>
           </nav>
 
           {/* Sponsor Badge */}
@@ -240,6 +254,15 @@ export function Header() {
               </div>
             );
           })}
+
+          {/* Mobile Join CTA */}
+          <Link
+            href="/join"
+            onClick={closeAll}
+            className="block mx-6 mt-4 py-2.5 text-sm font-bold bg-gold text-navy rounded-lg text-center hover:bg-gold/90 transition-colors"
+          >
+            Join the League
+          </Link>
 
           <div className="px-6 py-3 mt-2 border-t border-gold/10">
             <span className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">
