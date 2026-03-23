@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 
-const FORMSPREE_URL = "https://formspree.io/f/REPLACE_JOIN_ID";
+const FORMSPREE_URL = "https://formspree.io/f/xkoqdred";
 
 const features = [
   {
