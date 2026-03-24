@@ -18,6 +18,15 @@
 ### Venues
 - Add Google Maps directions button to each venue card on /venues page
 
+### SPA Events Admin
+- Admin page: /admin/im-draw (password: 2507)
+- Data stored in data/spa-events/ (events.json + per-event draw.json + original.xlsx)
+- API routes: /api/spa-events (events list), /api/spa-events/[eventId] (GET/POST/DELETE draw data)
+- Upload: /api/spa-events/[eventId]/upload (POST .xlsx, reads Sheet 12 Dumfries area)
+- Download: /api/spa-events/[eventId]/download (GET filled .xlsx for SPA submission)
+- Public hub: /spa-events (IM events, Willie McCartney Trophy, SPA Rankings)
+- Individual draws: /spa-events/[eventId]
+
 ### Cleanup
 - Remove public/logo-source.jpg from repo (unnecessary in production)
 

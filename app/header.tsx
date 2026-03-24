@@ -30,6 +30,7 @@ const navItems: NavItem[] = [
     items: [
       { href: "/competitions", label: "All Competitions" },
       { href: "/cup", label: "Cup Draw" },
+      { href: "/spa-events", label: "SPA Events" },
     ],
   },
   {

@@ -12,7 +12,7 @@ export default async function CupPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white">Cup Draw</h1>
         <p className="text-gray-400 text-sm mt-1">
-          Knockout competition bracket
+          Knockout competition draw
         </p>
       </div>
 
@@ -38,7 +38,7 @@ export default async function CupPage() {
           </h2>
           <p className="text-gray-400 text-sm max-w-md mx-auto">
             The knockout draw hasn&apos;t been published yet. Check back later
-            for the cup competition bracket.
+            for the cup competition draw.
           </p>
         </div>
       ) : (
