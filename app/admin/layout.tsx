@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Admin - SPA Events | Dumfries Pool League",
+  title: "Admin | Dumfries Pool League",
   robots: "noindex, nofollow",
 };
 

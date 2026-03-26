@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import type { SpaEventsData, CellMap } from "@/lib/spa-event-types";
 import type { IMDrawData, IMDrawMatch } from "@/lib/im-draw-types";
+import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
 
 const DATA_DIR = path.join(process.cwd(), "data", "spa-events");
-const PASSWORD = "2507";
 
 interface DrawDataWithCellMap extends IMDrawData {
   cellMap?: CellMap;
@@ -20,13 +20,10 @@ export async function GET(
   { params }: { params: Promise<{ eventId: string }> },
 ) {
   const { eventId } = await params;
-  const password = request.nextUrl.searchParams.get("password");
 
-  if (password !== PASSWORD) {
-    return NextResponse.json(
-      { error: "Invalid password" },
-      { status: 401 },
-    );
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {

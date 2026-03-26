@@ -3,11 +3,11 @@ import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import type { IMDrawData, IMDrawMatch } from "@/lib/im-draw-types";
 import type { SpaEventsData } from "@/lib/spa-event-types";
+import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
 
 const DATA_DIR = path.join(process.cwd(), "data", "spa-events");
-const PASSWORD = "2507";
 
 function drawPath(eventId: string) {
   return path.join(DATA_DIR, eventId, "draw.json");
@@ -89,16 +89,14 @@ export async function POST(
 ) {
   const { eventId } = await params;
 
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
-    const { password, matchId, score1, score2, walkover } = body;
-
-    if (password !== PASSWORD) {
-      return NextResponse.json(
-        { error: "Invalid password" },
-        { status: 401 },
-      );
-    }
+    const { matchId, score1, score2, walkover } = body;
 
     if (!(await validateEventId(eventId))) {
       return NextResponse.json(
@@ -190,16 +188,14 @@ export async function DELETE(
 ) {
   const { eventId } = await params;
 
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
-    const { password, matchId } = body;
-
-    if (password !== PASSWORD) {
-      return NextResponse.json(
-        { error: "Invalid password" },
-        { status: 401 },
-      );
-    }
+    const { matchId } = body;
 
     if (!(await validateEventId(eventId))) {
       return NextResponse.json(

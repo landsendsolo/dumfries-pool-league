@@ -3,11 +3,9 @@
 import { useState, useEffect, useCallback, type FormEvent } from "react";
 import type { IMDrawData, IMDrawMatch } from "@/lib/im-draw-types";
 import type { SpaEvent } from "@/lib/spa-event-types";
+import { logout } from "@/app/admin/actions";
 
 export default function AdminSpaEventsPage() {
-  const [password, setPassword] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
   const [events, setEvents] = useState<SpaEvent[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string>("");
   const [data, setData] = useState<IMDrawData | null>(null);
@@ -15,23 +13,12 @@ export default function AdminSpaEventsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const stored = sessionStorage.getItem("im-draw-admin-pw");
-    if (stored) {
-      setPassword(stored);
-      setAuthenticated(true);
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
   const fetchEvents = useCallback(async () => {
     try {
       const res = await fetch("/api/spa-events");
       if (!res.ok) throw new Error("Failed to fetch events");
       const json = await res.json();
       setEvents(json.events || []);
-      // Default to first active event
       const active = (json.events as SpaEvent[]).find(
         (e) => e.status === "active",
       );
@@ -67,73 +54,20 @@ export default function AdminSpaEventsPage() {
   }, [selectedEventId]);
 
   useEffect(() => {
-    if (authenticated) {
-      fetchEvents().then(() => setLoading(false));
-    }
-  }, [authenticated, fetchEvents]);
+    fetchEvents().then(() => setLoading(false));
+  }, [fetchEvents]);
 
   useEffect(() => {
-    if (authenticated && selectedEventId) {
+    if (selectedEventId) {
       fetchDrawData();
       const evt = events.find((e) => e.id === selectedEventId);
       setSelectedEvent(evt ?? null);
     }
-  }, [authenticated, selectedEventId, fetchDrawData, events]);
-
-  function handleLogin(e: FormEvent) {
-    e.preventDefault();
-    if (passwordInput === "2507") {
-      sessionStorage.setItem("im-draw-admin-pw", passwordInput);
-      setPassword(passwordInput);
-      setAuthenticated(true);
-    } else {
-      setError("Wrong password");
-    }
-  }
-
-  function handleLogout() {
-    sessionStorage.removeItem("im-draw-admin-pw");
-    setAuthenticated(false);
-    setPassword("");
-    setData(null);
-  }
+  }, [selectedEventId, fetchDrawData, events]);
 
   function refreshAll() {
     fetchEvents();
     fetchDrawData();
-  }
-
-  if (!authenticated) {
-    return (
-      <div className="max-w-md mx-auto px-4 py-20">
-        <h1 className="text-2xl font-bold text-white mb-2">
-          SPA Events Admin
-        </h1>
-        <p className="text-gray-400 text-sm mb-6">
-          Enter the admin password to manage results.
-        </p>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="password"
-            value={passwordInput}
-            onChange={(e) => {
-              setPasswordInput(e.target.value);
-              setError(null);
-            }}
-            placeholder="Password"
-            className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-base placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
-            autoFocus
-          />
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-gold text-navy font-bold text-base px-6 py-3 rounded-lg hover:bg-gold/90 transition-colors cursor-pointer"
-          >
-            Login
-          </button>
-        </form>
-      </div>
-    );
   }
 
   if (loading && !data && events.length === 0) {
@@ -155,12 +89,14 @@ export default function AdminSpaEventsPage() {
             Manage draws and results
           </p>
         </div>
-        <button
-          onClick={handleLogout}
-          className="text-gray-500 hover:text-gray-300 text-xs cursor-pointer"
-        >
-          Logout
-        </button>
+        <form action={logout}>
+          <button
+            type="submit"
+            className="text-gray-500 hover:text-gray-300 text-xs cursor-pointer"
+          >
+            Logout
+          </button>
+        </form>
       </div>
 
       {/* Event selector */}
@@ -174,7 +110,6 @@ export default function AdminSpaEventsPage() {
         <>
           <UploadSection
             event={selectedEvent}
-            password={password}
             onUpdate={refreshAll}
           />
 
@@ -184,18 +119,15 @@ export default function AdminSpaEventsPage() {
               <EnterResultSection
                 data={data}
                 eventId={selectedEventId}
-                password={password}
                 onUpdate={fetchDrawData}
               />
               <DownloadSection
                 event={selectedEvent}
                 eventId={selectedEventId}
-                password={password}
               />
               <ResultsTableSection
                 data={data}
                 eventId={selectedEventId}
-                password={password}
                 onUpdate={fetchDrawData}
               />
               <PlayerStatusSection data={data} />
@@ -245,11 +177,9 @@ function EventSelector({
 
 function UploadSection({
   event,
-  password,
   onUpdate,
 }: {
   event: SpaEvent;
-  password: string;
   onUpdate: () => void;
 }) {
   const [file, setFile] = useState<File | null>(null);
@@ -268,7 +198,6 @@ function UploadSection({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("password", password);
 
       const res = await fetch(`/api/spa-events/${event.id}/upload`, {
         method: "POST",
@@ -276,8 +205,7 @@ function UploadSection({
       });
 
       if (res.status === 401) {
-        sessionStorage.removeItem("im-draw-admin-pw");
-        window.location.reload();
+        window.location.href = "/admin/login";
         return;
       }
 
@@ -403,12 +331,10 @@ function OverviewSection({ data }: { data: IMDrawData }) {
 function EnterResultSection({
   data,
   eventId,
-  password,
   onUpdate,
 }: {
   data: IMDrawData;
   eventId: string;
-  password: string;
   onUpdate: () => void;
 }) {
   const [selectedRound, setSelectedRound] = useState<number>(0);
@@ -457,7 +383,6 @@ function EnterResultSection({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          password,
           matchId: selectedMatchId,
           score1: isWalkover ? 7 : parseInt(score1),
           score2: isWalkover ? 0 : parseInt(score2),
@@ -466,8 +391,7 @@ function EnterResultSection({
       });
 
       if (res.status === 401) {
-        sessionStorage.removeItem("im-draw-admin-pw");
-        window.location.reload();
+        window.location.href = "/admin/login";
         return;
       }
 
@@ -612,11 +536,9 @@ function EnterResultSection({
 function DownloadSection({
   event,
   eventId,
-  password,
 }: {
   event: SpaEvent;
   eventId: string;
-  password: string;
 }) {
   if (!event.hasSpreadsheet) return null;
 
@@ -632,7 +554,7 @@ function DownloadSection({
       <button
         onClick={() => {
           window.open(
-            `/api/spa-events/${eventId}/download?password=${encodeURIComponent(password)}`,
+            `/api/spa-events/${eventId}/download`,
             "_blank",
           );
         }}
@@ -647,12 +569,10 @@ function DownloadSection({
 function ResultsTableSection({
   data,
   eventId,
-  password,
   onUpdate,
 }: {
   data: IMDrawData;
   eventId: string;
-  password: string;
   onUpdate: () => void;
 }) {
   const [confirmId, setConfirmId] = useState<string | null>(null);
@@ -668,12 +588,11 @@ function ResultsTableSection({
       const res = await fetch(`/api/spa-events/${eventId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, matchId }),
+        body: JSON.stringify({ matchId }),
       });
 
       if (res.status === 401) {
-        sessionStorage.removeItem("im-draw-admin-pw");
-        window.location.reload();
+        window.location.href = "/admin/login";
         return;
       }
 
@@ -784,7 +703,6 @@ function PlayerStatusSection({ data }: { data: IMDrawData }) {
   function getStatus(
     name: string,
   ): "active" | "eliminated" | "qualified" {
-    // Check if player is in any final/qualifier match as winner
     const maxRound = Math.max(...data.matches.map((m) => m.round));
     const finalMatches = data.matches.filter((m) => m.round === maxRound);
     for (const fm of finalMatches) {

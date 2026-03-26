@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import type { IMDrawMatch, IMDrawRound } from "@/lib/im-draw-types";
 import type { SpaEventsData, CellMap } from "@/lib/spa-event-types";
+import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
 
 const DATA_DIR = path.join(process.cwd(), "data", "spa-events");
-const PASSWORD = "2507";
 
 /** Round column layout in the SPA spreadsheet */
 const ROUND_COLS = [
@@ -88,17 +88,14 @@ export async function POST(
 ) {
   const { eventId } = await params;
 
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const formData = await request.formData();
-    const password = formData.get("password") as string;
     const file = formData.get("file") as File | null;
-
-    if (password !== PASSWORD) {
-      return NextResponse.json(
-        { error: "Invalid password" },
-        { status: 401 },
-      );
-    }
 
     if (!file) {
       return NextResponse.json(
