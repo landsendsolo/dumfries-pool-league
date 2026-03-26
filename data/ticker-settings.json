@@ -1,0 +1,13 @@
+{
+  "enabled": {
+    "leagueLeader": true,
+    "topPlayer": true,
+    "nextFixtures": true,
+    "eventDeadlines": true,
+    "recentResults": true,
+    "sosChampions": true
+  },
+  "customMessages": [
+    "Welcome to the new Dumfries Pool League website!"
+  ]
+}

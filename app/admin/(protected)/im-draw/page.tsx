@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, type FormEvent } from "react";
 import type { IMDrawData, IMDrawMatch } from "@/lib/im-draw-types";
 import type { SpaEvent } from "@/lib/spa-event-types";
 import { logout } from "@/app/admin/actions";
+import { AdminNav } from "@/app/admin/components/admin-nav";
 
 export default function AdminSpaEventsPage() {
   const [events, setEvents] = useState<SpaEvent[]>([]);
@@ -80,6 +81,7 @@ export default function AdminSpaEventsPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      <AdminNav />
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">
