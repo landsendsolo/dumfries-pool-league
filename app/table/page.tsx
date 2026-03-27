@@ -1,5 +1,8 @@
 import { getLeagueTable } from "@/lib/leagueapp";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 300;
+
 export const metadata = {
   title: "League Table | Dumfries Pool League",
 };

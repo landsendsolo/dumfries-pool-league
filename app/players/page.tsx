@@ -1,6 +1,9 @@
 import { getPlayerStats } from "@/lib/leagueapp";
 import { PlayerSearch } from "./player-search";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 300;
+
 export const metadata = {
   title: "Players | Dumfries Pool League",
 };

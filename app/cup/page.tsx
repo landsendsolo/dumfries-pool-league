@@ -5,6 +5,7 @@ import {
 } from "@/lib/leagueapp";
 import type { TeamStanding, Result } from "@/lib/leagueapp";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 300;
 
 export const metadata = {

@@ -6,6 +6,9 @@ import {
 import type { TeamStanding, Result } from "@/lib/leagueapp";
 import { CompetitionTabs } from "./competition-tabs";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 300;
+
 export const metadata = {
   title: "Competitions | Dumfries Pool League",
 };
