@@ -93,12 +93,13 @@ function getWinner(
 }
 
 export default async function LeagueCompetitionsPage() {
-  const [groupTable, groupResults, knockoutResults, liveScore1, liveScore2] = await Promise.all([
+  const [groupTable, groupResults, knockoutResults, liveScore1, liveScore2, liveFinal] = await Promise.all([
     getTableByCompetition(COMPETITIONS.TEAM_COMP_WK2),
     getResultsByCompetition(COMPETITIONS.TEAM_COMP_WK2),
     getResultsByCompetition(COMPETITIONS.TEAM_COMP),
     fetchLiveScore(SEMI_FINALS[0].matchId),
     fetchLiveScore(SEMI_FINALS[1].matchId),
+    fetchLiveScore("315619"),
   ]);
 
   // Match knockout results to semi-finals
@@ -263,6 +264,13 @@ export default async function LeagueCompetitionsPage() {
             The Final
           </span>
 
+          {liveFinal && !finalResult && sf1Winner && sf2Winner && (
+            <span className="inline-flex items-center gap-1 text-xs text-[#e24b4a] font-bold animate-pulse mb-3">
+              <span className="w-1.5 h-1.5 bg-[#e24b4a] rounded-full" />
+              LIVE
+            </span>
+          )}
+
           {champion && finalResult ? (
             <>
               <div className="flex items-center justify-center gap-4 sm:gap-6">
@@ -288,6 +296,22 @@ export default async function LeagueCompetitionsPage() {
                 {champion} — Team Competition Champions 2026
               </p>
             </>
+          ) : sf1Winner && sf2Winner ? (
+            <div className="flex items-center justify-center gap-4 sm:gap-6">
+              <span className={`text-lg sm:text-xl font-bold ${liveFinal && liveFinal.home > liveFinal.away ? "text-gold" : "text-white"}`}>
+                {sf1Winner}
+              </span>
+              {liveFinal ? (
+                <span className="text-gold font-bold text-lg sm:text-xl bg-navy/60 rounded px-3 py-1 tabular-nums">
+                  {liveFinal.home} - {liveFinal.away}
+                </span>
+              ) : (
+                <span className="text-gold/40 text-sm font-bold">vs</span>
+              )}
+              <span className={`text-lg sm:text-xl font-bold ${liveFinal && liveFinal.away > liveFinal.home ? "text-gold" : "text-white"}`}>
+                {sf2Winner}
+              </span>
+            </div>
           ) : (
             <div className="flex items-center justify-center gap-4 sm:gap-6">
               <span className={`text-lg sm:text-xl font-bold ${sf1Winner ? "text-gold" : "text-gray-500"}`}>

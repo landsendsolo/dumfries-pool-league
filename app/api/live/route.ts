@@ -5,7 +5,7 @@ import { getFixtures, getResults } from "@/lib/leagueapp";
 export const dynamic = "force-dynamic";
 
 // ─── Blacklisted match IDs (invalid/test matches) ───────────────────
-const BLACKLISTED_MATCH_IDS = ["301883"];
+const BLACKLISTED_MATCH_IDS = ["301883", "301873"];
 
 // ─── Special competition events ─────────────────────────────────────
 
