@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "./header";
 import { LazyTicker } from "./components/lazy-ticker";
+import { LazyFeedback } from "./components/lazy-feedback";
 import { getTickerData } from "@/lib/ticker";
 
 const geistSans = Geist({
@@ -103,6 +104,7 @@ export default async function RootLayout({
             </p>
           </div>
         </footer>
+        <LazyFeedback />
       </body>
     </html>
   );
