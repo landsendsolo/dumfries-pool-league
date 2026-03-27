@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import type { TickerData } from "@/lib/ticker";
 
-const MOBILE_SPEED = 150; // pixels per second (< 640px)
+const MOBILE_SPEED = 220; // pixels per second (< 640px)
 const DESKTOP_SPEED = 100; // pixels per second (>= 640px)
 
 function formatTickerItem(text: string, isLive: boolean): ReactNode {
