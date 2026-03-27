@@ -41,8 +41,10 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Header />
-        <div style={{ minHeight: "36px" }}>
-          <LazyTicker initialData={tickerData} />
+        <div style={{ minHeight: "36px" }} className="bg-[#0f1a2e]">
+          <div className="max-w-7xl mx-auto">
+            <LazyTicker initialData={tickerData} />
+          </div>
         </div>
 
         {/* Main Content */}
