@@ -84,6 +84,14 @@ export default function RootLayout({
               Proudly sponsored by{" "}
               <span className="text-gold">MKM Dumfries Timber</span>
             </p>
+            <p className="mt-3">
+              <a
+                href="/live"
+                className="text-gold text-sm hover:underline"
+              >
+                Live Scores &rarr;
+              </a>
+            </p>
           </div>
         </footer>
       </body>

@@ -44,9 +44,19 @@ const navItems: NavItem[] = [
   { type: "link", href: "/sponsors", label: "Sponsors" },
 ];
 
+function isMatchWindow(): boolean {
+  const now = new Date();
+  const uk = new Date(
+    now.toLocaleString("en-US", { timeZone: "Europe/London" }),
+  );
+  const mins = uk.getHours() * 60 + uk.getMinutes();
+  return mins >= 18 * 60 + 30 || mins <= 60;
+}
+
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [liveActive, setLiveActive] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -77,6 +87,13 @@ export function Header() {
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, [menuOpen, openDropdown]);
+
+  // Check match window for live indicator
+  useEffect(() => {
+    setLiveActive(isMatchWindow());
+    const timer = setInterval(() => setLiveActive(isMatchWindow()), 60_000);
+    return () => clearInterval(timer);
+  }, []);
 
   function handleMouseEnter(key: string) {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -117,6 +134,22 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
+            {/* Live link */}
+            <Link
+              href="/live"
+              onClick={closeAll}
+              className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded transition-colors ${
+                liveActive
+                  ? "text-[#e24b4a] hover:text-[#e24b4a]/80"
+                  : "text-gray-300 hover:text-gold"
+              }`}
+            >
+              {liveActive && (
+                <span className="w-2 h-2 bg-[#e24b4a] rounded-full animate-pulse" />
+              )}
+              Live
+            </Link>
+
             {navItems.map((item) => {
               if (item.type === "link") {
                 return (
@@ -222,6 +255,22 @@ export function Header() {
         }`}
       >
         <nav className="bg-navy-dark border-t border-gold/10 pb-4">
+          {/* Mobile Live link */}
+          <Link
+            href="/live"
+            onClick={closeAll}
+            className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors ${
+              liveActive
+                ? "text-[#e24b4a] hover:text-[#e24b4a]/80"
+                : "text-gray-300 hover:text-gold hover:bg-navy-light/50"
+            }`}
+          >
+            {liveActive && (
+              <span className="w-2 h-2 bg-[#e24b4a] rounded-full animate-pulse" />
+            )}
+            Live
+          </Link>
+
           {navItems.map((item) => {
             if (item.type === "link") {
               return (
