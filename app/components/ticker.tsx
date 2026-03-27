@@ -1,11 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, type ReactNode } from "react";
-
-interface TickerData {
-  mode: "live" | "news" | "none";
-  items: string[];
-}
+import type { TickerData } from "@/lib/ticker";
 
 function formatTickerItem(text: string, isLive: boolean): ReactNode {
   // Highlight scores (4-3, 7-2), percentages (83%), and point totals (23 points)
@@ -22,10 +18,10 @@ function formatTickerItem(text: string, isLive: boolean): ReactNode {
   });
 }
 
-export function Ticker() {
-  const [data, setData] = useState<TickerData | null>(null);
+export function Ticker({ initialData }: { initialData?: TickerData }) {
+  const [data, setData] = useState<TickerData | null>(initialData ?? null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const modeRef = useRef<string | null>(null);
+  const modeRef = useRef<string | null>(initialData?.mode ?? null);
 
   useEffect(() => {
     async function fetchTicker() {
@@ -40,7 +36,10 @@ export function Ticker() {
       }
     }
 
-    fetchTicker();
+    // Skip initial fetch if we already have server data
+    if (!initialData) {
+      fetchTicker();
+    }
 
     // Set up polling — check mode periodically
     function startPolling() {
@@ -65,7 +64,7 @@ export function Ticker() {
       if (intervalRef.current) clearInterval(intervalRef.current);
       clearInterval(modeCheck);
     };
-  }, []);
+  }, [initialData]);
 
   if (!data || data.mode === "none" || data.items.length === 0) {
     return null;

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "./header";
 import { LazyTicker } from "./components/lazy-ticker";
+import { getTickerData } from "@/lib/ticker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,11 +25,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export const revalidate = 60;
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const tickerData = await getTickerData();
+
   return (
     <html
       lang="en"
@@ -37,7 +42,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Header />
         <div style={{ minHeight: "36px" }}>
-          <LazyTicker />
+          <LazyTicker initialData={tickerData} />
         </div>
 
         {/* Main Content */}
