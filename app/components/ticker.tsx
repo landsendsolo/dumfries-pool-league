@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import type { TickerData } from "@/lib/ticker";
 
-const TARGET_SPEED = 100; // pixels per second
+const MOBILE_SPEED = 150; // pixels per second (< 640px)
+const DESKTOP_SPEED = 100; // pixels per second (>= 640px)
 
 function formatTickerItem(text: string, isLive: boolean): ReactNode {
   // Highlight scores (4-3, 7-2), percentages (83%), and point totals (23 points)
@@ -76,7 +77,8 @@ export function Ticker({ initialData }: { initialData?: TickerData }) {
     const scrollWidth = scrollRef.current.scrollWidth;
     // translateX(-50%) moves half the total width (one copy)
     const dist = scrollWidth / 2;
-    setDuration(dist / TARGET_SPEED);
+    const speed = window.innerWidth < 640 ? MOBILE_SPEED : DESKTOP_SPEED;
+    setDuration(dist / speed);
   }, [data]);
 
   if (!data || data.mode === "none" || data.items.length === 0) {
