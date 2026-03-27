@@ -105,8 +105,10 @@ export default async function LeagueCompetitionsPage() {
   const sf1Result = findResult(knockoutResults, SEMI_FINALS[0].home, SEMI_FINALS[0].away);
   const sf2Result = findResult(knockoutResults, SEMI_FINALS[1].home, SEMI_FINALS[1].away);
 
-  const sf1Winner = getWinner(sf1Result, SEMI_FINALS[0].home, SEMI_FINALS[0].away);
-  const sf2Winner = getWinner(sf2Result, SEMI_FINALS[1].home, SEMI_FINALS[1].away);
+  const sf1Winner = getWinner(sf1Result, SEMI_FINALS[0].home, SEMI_FINALS[0].away)
+    ?? (liveScore1 && liveScore1.home >= 4 ? SEMI_FINALS[0].home : liveScore1 && liveScore1.away >= 4 ? SEMI_FINALS[0].away : null);
+  const sf2Winner = getWinner(sf2Result, SEMI_FINALS[1].home, SEMI_FINALS[1].away)
+    ?? (liveScore2 && liveScore2.home >= 4 ? SEMI_FINALS[1].home : liveScore2 && liveScore2.away >= 4 ? SEMI_FINALS[1].away : null);
 
   // Check for final result
   const finalResult =
