@@ -4,9 +4,10 @@ import {
   getResultsByCompetition,
 } from "@/lib/leagueapp";
 import type { TeamStanding, Result } from "@/lib/leagueapp";
+import * as cheerio from "cheerio";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 300;
+export const revalidate = 30;
 
 export const metadata = {
   title: "League Competitions | Dumfries Pool League",
@@ -19,6 +20,7 @@ const SEMI_FINALS = [
     away: "Abbey B",
     venue: "Abbey",
     time: "19:30",
+    matchId: "315617",
   },
   {
     label: "Semi Final 2",
@@ -26,8 +28,34 @@ const SEMI_FINALS = [
     away: "Normandy A",
     venue: "Normandy Bar",
     time: "19:30",
+    matchId: "315618",
   },
 ];
+
+async function fetchLiveScore(matchId: string): Promise<{ home: number; away: number } | null> {
+  try {
+    const res = await fetch(
+      `https://live.leagueapplive.com/matchgames?sitename=dumfries&matchid=${matchId}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    let home = 0, away = 0;
+    $("#keywords tbody tr").each((_, row) => {
+      const cells = $(row).find("td");
+      if (cells.length < 5) return;
+      const scoreText = $(cells[3]).text().trim();
+      const m = scoreText.match(/(\d+)\s*-\s*(\d+)/);
+      if (!m) return;
+      home += parseInt(m[1]);
+      away += parseInt(m[2]);
+    });
+    return { home, away };
+  } catch {
+    return null;
+  }
+}
 
 function findResult(
   results: Result[],
@@ -65,10 +93,12 @@ function getWinner(
 }
 
 export default async function LeagueCompetitionsPage() {
-  const [groupTable, groupResults, knockoutResults] = await Promise.all([
+  const [groupTable, groupResults, knockoutResults, liveScore1, liveScore2] = await Promise.all([
     getTableByCompetition(COMPETITIONS.TEAM_COMP_WK2),
     getResultsByCompetition(COMPETITIONS.TEAM_COMP_WK2),
     getResultsByCompetition(COMPETITIONS.TEAM_COMP),
+    fetchLiveScore(SEMI_FINALS[0].matchId),
+    fetchLiveScore(SEMI_FINALS[1].matchId),
   ]);
 
   // Match knockout results to semi-finals
@@ -122,6 +152,8 @@ export default async function LeagueCompetitionsPage() {
             const winner = i === 0 ? sf1Winner : sf2Winner;
             const parsed = result ? parseScore(result.score) : null;
 
+            const liveScore = i === 0 ? liveScore1 : liveScore2;
+
             // Determine score display accounting for possible reversed result row
             let homeScore: number | null = null;
             let awayScore: number | null = null;
@@ -135,14 +167,23 @@ export default async function LeagueCompetitionsPage() {
               }
             }
 
+            const displayHomeScore = homeScore !== null ? homeScore : liveScore?.home ?? null;
+            const displayAwayScore = awayScore !== null ? awayScore : liveScore?.away ?? null;
+            const isLive = homeScore === null && liveScore !== null;
+
             return (
               <div
                 key={sf.label}
                 className="bg-navy-light/50 border border-gold/20 rounded-xl p-5 sm:p-6"
               >
-                <span className="text-xs font-bold text-gold uppercase tracking-wider block mb-4">
-                  {sf.label}
-                </span>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-bold text-gold uppercase tracking-wider">
+                    {sf.label}
+                  </span>
+                  {isLive && (
+                    <span className="text-xs text-[#e24b4a] font-bold animate-pulse">● LIVE</span>
+                  )}
+                </div>
 
                 <div className="space-y-3">
                   {/* Home team */}
@@ -158,19 +199,19 @@ export default async function LeagueCompetitionsPage() {
                     >
                       {sf.home}
                     </span>
-                    {homeScore !== null ? (
+                    {displayHomeScore !== null ? (
                       <span
                         className={`text-xl font-bold tabular-nums ${
-                          winner === sf.home ? "text-gold" : "text-gray-500"
+                          isLive ? "text-white" : winner === sf.home ? "text-gold" : "text-gray-500"
                         }`}
                       >
-                        {homeScore}
+                        {displayHomeScore}
                       </span>
                     ) : null}
                   </div>
 
                   {/* Divider / Score */}
-                  {result ? (
+                  {result || isLive ? (
                     <div className="border-t border-gold/10" />
                   ) : (
                     <div className="text-center">
@@ -191,13 +232,13 @@ export default async function LeagueCompetitionsPage() {
                     >
                       {sf.away}
                     </span>
-                    {awayScore !== null ? (
+                    {displayAwayScore !== null ? (
                       <span
                         className={`text-xl font-bold tabular-nums ${
-                          winner === sf.away ? "text-gold" : "text-gray-500"
+                          isLive ? "text-white" : winner === sf.away ? "text-gold" : "text-gray-500"
                         }`}
                       >
-                        {awayScore}
+                        {displayAwayScore}
                       </span>
                     ) : null}
                   </div>
