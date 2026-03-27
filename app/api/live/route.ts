@@ -4,6 +4,9 @@ import { getFixtures, getResults } from "@/lib/leagueapp";
 
 export const dynamic = "force-dynamic";
 
+// ─── Blacklisted match IDs (invalid/test matches) ───────────────────
+const BLACKLISTED_MATCH_IDS = ["301883"];
+
 // ─── Special competition events ─────────────────────────────────────
 
 const SPECIAL_EVENTS = [
@@ -93,12 +96,10 @@ async function fetchLiveMatches(): Promise<LiveMatch[]> {
 
       const score = `${scoreMatch[1]} - ${scoreMatch[2]}`;
 
-      // Extract matchId from href
       const href = $(el).attr("href") || "";
       const matchIdMatch = href.match(/matchid=(\d+)/);
       const matchId = matchIdMatch ? matchIdMatch[1] : "";
 
-      // Navigate to the row and extract team names from sibling cells
       const row = $(el).closest("tr");
       const cells = row.find("td");
       const home = $(cells[1]).text().trim();
@@ -109,9 +110,10 @@ async function fetchLiveMatches(): Promise<LiveMatch[]> {
       }
     });
 
-    // Deduplicate by matchId
+    // Blacklist invalid matches then deduplicate by matchId
     const seen = new Set<string>();
     return matches.filter((m) => {
+      if (BLACKLISTED_MATCH_IDS.includes(m.matchId)) return false;
       if (seen.has(m.matchId)) return false;
       seen.add(m.matchId);
       return true;
@@ -139,7 +141,6 @@ export async function GET() {
       });
     }
 
-    // Idle mode — fetch fixtures and results for fallback display
     const [fixtures, results] = await Promise.all([
       getFixtures().catch(() => []),
       getResults().catch(() => []),
@@ -161,7 +162,7 @@ export async function GET() {
         away: r.away,
         score: r.score,
       })),
-      updatedAt,
+      updatedAt: new Date().toISOString(),
     });
   } catch {
     return NextResponse.json({
