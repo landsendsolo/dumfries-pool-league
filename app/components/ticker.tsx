@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import type { TickerData } from "@/lib/ticker";
 
+const TARGET_SPEED = 100; // pixels per second
+
 function formatTickerItem(text: string, isLive: boolean): ReactNode {
   // Highlight scores (4-3, 7-2), percentages (83%), and point totals (23 points)
   const parts = text.split(/(\d+\s*-\s*\d+|\d+(?:\.\d+)?%|\d+ points)/);
@@ -20,6 +22,8 @@ function formatTickerItem(text: string, isLive: boolean): ReactNode {
 
 export function Ticker({ initialData }: { initialData?: TickerData }) {
   const [data, setData] = useState<TickerData | null>(initialData ?? null);
+  const [duration, setDuration] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const modeRef = useRef<string | null>(initialData?.mode ?? null);
 
@@ -66,12 +70,20 @@ export function Ticker({ initialData }: { initialData?: TickerData }) {
     };
   }, [initialData]);
 
+  // Measure scrollWidth and calculate duration for target speed
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    const scrollWidth = scrollRef.current.scrollWidth;
+    // translateX(-50%) moves half the total width (one copy)
+    const dist = scrollWidth / 2;
+    setDuration(dist / TARGET_SPEED);
+  }, [data]);
+
   if (!data || data.mode === "none" || data.items.length === 0) {
     return null;
   }
 
   const isLive = data.mode === "live";
-  const duration = Math.max(18, data.items.length * 4);
 
   return (
     <div className="w-full h-9 bg-navy flex items-center overflow-hidden border-b border-gold/10">
@@ -100,9 +112,12 @@ export function Ticker({ initialData }: { initialData?: TickerData }) {
           aria-hidden
         />
         <div
+          ref={scrollRef}
           className="flex whitespace-nowrap"
           style={{
-            animation: `ticker-scroll ${duration}s linear infinite`,
+            animation: duration
+              ? `ticker-scroll ${duration.toFixed(1)}s linear infinite`
+              : "none",
             willChange: "transform",
             transform: "translateZ(0)",
           }}
