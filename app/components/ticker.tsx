@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import type { TickerData } from "@/lib/ticker";
 
-const MOBILE_SPEED = 350; // pixels per second (< 640px)
-const DESKTOP_SPEED = 100; // pixels per second (>= 640px)
+const MOBILE_SPEED = 60; // pixels per second (< 640px)
+const DESKTOP_SPEED = 60; // pixels per second (>= 640px)
 
 function formatTickerItem(text: string, isLive: boolean): ReactNode {
   // Highlight scores (4-3, 7-2), percentages (83%), and point totals (23 points)
