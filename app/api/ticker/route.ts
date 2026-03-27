@@ -29,9 +29,75 @@ interface TickerSettings {
   customMessages: string[];
 }
 
+// ─── UK time helpers ────────────────────────────────────────────────
+
+function getUkNow(): Date {
+  const now = new Date();
+  return new Date(
+    now.toLocaleString("en-US", { timeZone: "Europe/London" }),
+  );
+}
+
+function getUkToday(): string {
+  // Returns YYYY-MM-DD in UK timezone
+  const uk = getUkNow();
+  const y = uk.getFullYear();
+  const m = String(uk.getMonth() + 1).padStart(2, "0");
+  const d = String(uk.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function isMatchWindow(): boolean {
+  const uk = getUkNow();
+  const timeInMinutes = uk.getHours() * 60 + uk.getMinutes();
+  // 18:30 to 01:00 next day
+  return timeInMinutes >= 18 * 60 + 30 || timeInMinutes <= 60;
+}
+
+/** Returns urgency prefix or null if the event date is past */
+function dateUrgency(eventDateStr: string): string | null {
+  const uk = getUkNow();
+  const today = new Date(getUkToday());
+  const eventDate = new Date(eventDateStr);
+
+  if (isNaN(eventDate.getTime())) return null;
+
+  const diffMs = eventDate.getTime() - today.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) return null; // past
+  if (diffDays === 0) return "TONIGHT";
+  if (diffDays === 1) return "TOMORROW";
+  if (diffDays <= 7) return "THIS WEEK";
+  return null; // more than a week away — no urgency prefix
+}
+
+/**
+ * Parse DD-MM-YYYY (LeagueAppLive fixture format) to YYYY-MM-DD
+ */
+function parseDDMMYYYY(str: string): string | null {
+  const m = str.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (!m) return null;
+  return `${m[3]}-${m[2]}-${m[1]}`;
+}
+
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+// ─── Special competition events ─────────────────────────────────────
+
+const SPECIAL_EVENTS = [
+  {
+    date: "2026-03-27",
+    event: "Team Competition Finals — Semi Finals 19:30 — Normandy Bar",
+  },
+];
+
 // ─── Live scores ────────────────────────────────────────────────────
 
 async function fetchLiveMatches(): Promise<string[]> {
+  // Only check for live matches during match window (18:30–01:00 UK)
+  if (!isMatchWindow()) return [];
+
   try {
     const res = await fetch(
       "https://live.leagueapplive.com/livedata.php?sitename=dumfries",
@@ -99,6 +165,14 @@ async function generateNewsItems(
 ): Promise<string[]> {
   const items: string[] = [];
 
+  // Special competition events (urgency-aware, always shown)
+  for (const se of SPECIAL_EVENTS) {
+    const urgency = dateUrgency(se.date);
+    if (urgency) {
+      items.push(`${urgency} — ${se.event}`);
+    }
+  }
+
   if (settings.enabled.leagueLeader) {
     try {
       const table = await getLeagueTable();
@@ -136,7 +210,22 @@ async function generateNewsItems(
     try {
       const fixtures = await getFixtures();
       if (fixtures.length > 0) {
-        items.push(`Next fixtures: ${fixtures[0].date}`);
+        const isoDate = parseDDMMYYYY(fixtures[0].date);
+        if (isoDate) {
+          const urgency = dateUrgency(isoDate);
+          if (urgency === "TONIGHT") {
+            items.push(`TONIGHT — League fixtures ${fixtures[0].time || "19:45"}`);
+          } else if (urgency === "TOMORROW") {
+            items.push("TOMORROW — League fixtures");
+          } else if (urgency === "THIS WEEK") {
+            const d = new Date(isoDate);
+            items.push(`THIS WEEK — League fixtures ${DAY_NAMES[d.getDay()]}`);
+          } else {
+            items.push(`Next league fixtures: ${fixtures[0].date}`);
+          }
+        } else {
+          items.push(`Next league fixtures: ${fixtures[0].date}`);
+        }
       }
     } catch {
       /* skip */
@@ -223,7 +312,7 @@ function parseLooseDate(str: string): Date | null {
 
 export async function GET() {
   try {
-    // Step 1: Check for live matches
+    // Step 1: Check for live matches (only during match window)
     const liveItems = await fetchLiveMatches();
     if (liveItems.length > 0) {
       return NextResponse.json({ mode: "live", items: liveItems });
