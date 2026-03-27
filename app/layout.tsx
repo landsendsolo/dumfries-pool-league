@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "./header";
-import { Ticker } from "./components/ticker";
+import { LazyTicker } from "./components/lazy-ticker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +36,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Header />
-        <Ticker />
+        <div style={{ minHeight: "36px" }}>
+          <LazyTicker />
+        </div>
 
         {/* Main Content */}
         <main className="flex-1">{children}</main>

@@ -104,6 +104,8 @@ export function Ticker() {
           className="flex whitespace-nowrap"
           style={{
             animation: `ticker-scroll ${duration}s linear infinite`,
+            willChange: "transform",
+            transform: "translateZ(0)",
           }}
         >
           {[...data.items, ...data.items].map((item, i) => (
