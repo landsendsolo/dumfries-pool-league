@@ -19,6 +19,12 @@ export interface TickerData {
   items: string[];
 }
 
+export interface CustomNewsItem {
+  id: string;
+  text: string;
+  enabled: boolean;
+}
+
 interface TickerSettings {
   enabled: {
     leagueLeader: boolean;
@@ -29,6 +35,7 @@ interface TickerSettings {
     sosChampions: boolean;
   };
   customMessages: string[];
+  customNewsItems: CustomNewsItem[];
 }
 
 // ─── UK time helpers ────────────────────────────────────────────────
@@ -146,6 +153,7 @@ async function loadSettings(): Promise<TickerSettings> {
         sosChampions: true,
       },
       customMessages: [],
+      customNewsItems: [],
     };
   }
 }
@@ -264,6 +272,14 @@ async function generateNewsItems(
 
   for (const msg of settings.customMessages) {
     if (msg.trim()) items.push(msg.trim());
+  }
+
+  if (settings.customNewsItems) {
+    for (const item of settings.customNewsItems) {
+      if (item.enabled && item.text.trim()) {
+        items.push(item.text.trim());
+      }
+    }
   }
 
   return items;

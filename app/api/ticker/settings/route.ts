@@ -1,7 +1,9 @@
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
+import type { CustomNewsItem } from "@/lib/ticker";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +23,7 @@ interface TickerSettings {
     sosChampions: boolean;
   };
   customMessages: string[];
+  customNewsItems: CustomNewsItem[];
 }
 
 const DEFAULTS: TickerSettings = {
@@ -33,12 +36,16 @@ const DEFAULTS: TickerSettings = {
     sosChampions: true,
   },
   customMessages: [],
+  customNewsItems: [],
 };
 
 export async function GET() {
   try {
     const raw = await readFile(SETTINGS_PATH, "utf-8");
-    return NextResponse.json(JSON.parse(raw));
+    const parsed = JSON.parse(raw);
+    // Ensure customNewsItems exists for older settings files
+    if (!parsed.customNewsItems) parsed.customNewsItems = [];
+    return NextResponse.json(parsed);
   } catch {
     return NextResponse.json(DEFAULTS);
   }
@@ -79,9 +86,28 @@ export async function POST(request: NextRequest) {
       customMessages: body.customMessages
         .filter((m): m is string => typeof m === "string" && m.trim().length > 0)
         .map((m) => m.trim()),
+      customNewsItems: Array.isArray(body.customNewsItems)
+        ? body.customNewsItems
+            .filter(
+              (item): item is CustomNewsItem =>
+                typeof item === "object" &&
+                typeof item.id === "string" &&
+                typeof item.text === "string" &&
+                item.text.trim().length > 0,
+            )
+            .map((item) => ({
+              id: item.id,
+              text: item.text.trim(),
+              enabled: !!item.enabled,
+            }))
+        : [],
     };
 
     await writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2), "utf-8");
+
+    // Purge ticker cache so changes appear immediately
+    revalidatePath("/api/ticker");
+
     return NextResponse.json(settings);
   } catch {
     return NextResponse.json(
