@@ -53,9 +53,7 @@ function isMatchWindow(): boolean {
 function shouldRefresh(data: LiveData | null): boolean {
   // Always refresh if live matches detected
   if (data?.mode === "live" && data.matches.length > 0) return true;
-  // Always refresh if there's a TONIGHT special event
-  if (data?.specialEvents?.some((e) => e.urgency === "TONIGHT")) return true;
-  // Refresh during match window
+  // Refresh during match window (Friday 19:00-01:00 UK time)
   return isMatchWindow();
 }
 
