@@ -11,7 +11,7 @@ import {
 import type { SpaEventsData } from "@/lib/spa-event-types";
 import type { IMDrawData } from "@/lib/im-draw-types";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const SETTINGS_PATH = path.join(DATA_DIR, "ticker-settings.json");
@@ -173,62 +173,59 @@ async function generateNewsItems(
     }
   }
 
-  if (settings.enabled.leagueLeader) {
-    try {
-      const table = await getLeagueTable();
-      if (table.length > 0) {
-        items.push(
-          `${table[0].name} lead the table with ${table[0].points} points`,
-        );
-      }
-    } catch {
-      /* skip */
+  // Fetch all 4 external sources in parallel
+  const [table, players, fixtures, results] = await Promise.all([
+    settings.enabled.leagueLeader
+      ? getLeagueTable().catch(() => [])
+      : Promise.resolve([]),
+    settings.enabled.topPlayer
+      ? getPlayerStats().catch(() => [])
+      : Promise.resolve([]),
+    settings.enabled.nextFixtures
+      ? getFixtures().catch(() => [])
+      : Promise.resolve([]),
+    settings.enabled.recentResults
+      ? getResults().catch(() => [])
+      : Promise.resolve([]),
+  ]);
+
+  if (settings.enabled.leagueLeader && table.length > 0) {
+    items.push(
+      `${table[0].name} lead the table with ${table[0].points} points`,
+    );
+  }
+
+  if (settings.enabled.topPlayer && players.length > 0) {
+    const qualified = players.filter((p) => p.played >= 5);
+    if (qualified.length > 0) {
+      qualified.sort((a, b) => {
+        const pctA = parseFloat(a.percentage) || 0;
+        const pctB = parseFloat(b.percentage) || 0;
+        return pctB - pctA;
+      });
+      const top = qualified[0];
+      items.push(
+        `${top.forename} ${top.surname} top player — ${top.percentage} win rate`,
+      );
     }
   }
 
-  if (settings.enabled.topPlayer) {
-    try {
-      const players = await getPlayerStats();
-      const qualified = players.filter((p) => p.played >= 5);
-      if (qualified.length > 0) {
-        qualified.sort((a, b) => {
-          const pctA = parseFloat(a.percentage) || 0;
-          const pctB = parseFloat(b.percentage) || 0;
-          return pctB - pctA;
-        });
-        const top = qualified[0];
-        items.push(
-          `${top.forename} ${top.surname} top player — ${top.percentage} win rate`,
-        );
+  if (settings.enabled.nextFixtures && fixtures.length > 0) {
+    const isoDate = parseDDMMYYYY(fixtures[0].date);
+    if (isoDate) {
+      const urgency = dateUrgency(isoDate);
+      if (urgency === "TONIGHT") {
+        items.push(`TONIGHT — League fixtures ${fixtures[0].time || "19:45"}`);
+      } else if (urgency === "TOMORROW") {
+        items.push("TOMORROW — League fixtures");
+      } else if (urgency === "THIS WEEK") {
+        const d = new Date(isoDate);
+        items.push(`THIS WEEK — League fixtures ${DAY_NAMES[d.getDay()]}`);
+      } else {
+        items.push(`Next league fixtures: ${fixtures[0].date}`);
       }
-    } catch {
-      /* skip */
-    }
-  }
-
-  if (settings.enabled.nextFixtures) {
-    try {
-      const fixtures = await getFixtures();
-      if (fixtures.length > 0) {
-        const isoDate = parseDDMMYYYY(fixtures[0].date);
-        if (isoDate) {
-          const urgency = dateUrgency(isoDate);
-          if (urgency === "TONIGHT") {
-            items.push(`TONIGHT — League fixtures ${fixtures[0].time || "19:45"}`);
-          } else if (urgency === "TOMORROW") {
-            items.push("TOMORROW — League fixtures");
-          } else if (urgency === "THIS WEEK") {
-            const d = new Date(isoDate);
-            items.push(`THIS WEEK — League fixtures ${DAY_NAMES[d.getDay()]}`);
-          } else {
-            items.push(`Next league fixtures: ${fixtures[0].date}`);
-          }
-        } else {
-          items.push(`Next league fixtures: ${fixtures[0].date}`);
-        }
-      }
-    } catch {
-      /* skip */
+    } else {
+      items.push(`Next league fixtures: ${fixtures[0].date}`);
     }
   }
 
@@ -267,15 +264,10 @@ async function generateNewsItems(
     }
   }
 
-  if (settings.enabled.recentResults) {
-    try {
-      const results = await getResults();
-      const latest = results.slice(0, 3);
-      for (const r of latest) {
-        items.push(`${r.home} ${r.score} ${r.away}`);
-      }
-    } catch {
-      /* skip */
+  if (settings.enabled.recentResults && results.length > 0) {
+    const latest = results.slice(0, 3);
+    for (const r of latest) {
+      items.push(`${r.home} ${r.score} ${r.away}`);
     }
   }
 

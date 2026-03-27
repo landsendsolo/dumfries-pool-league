@@ -4,6 +4,63 @@ import { getFixtures, getResults } from "@/lib/leagueapp";
 
 export const dynamic = "force-dynamic";
 
+// ─── Special competition events ─────────────────────────────────────
+
+const SPECIAL_EVENTS = [
+  {
+    date: "2026-03-27",
+    label: "Team Competition Finals",
+    details: "Semi Finals — 19:30 — Normandy Bar",
+    link: "/cup",
+  },
+];
+
+function getUkToday(): string {
+  const now = new Date();
+  const uk = new Date(
+    now.toLocaleString("en-US", { timeZone: "Europe/London" }),
+  );
+  const y = uk.getFullYear();
+  const m = String(uk.getMonth() + 1).padStart(2, "0");
+  const d = String(uk.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function dateUrgency(eventDateStr: string): string | null {
+  const today = new Date(getUkToday());
+  const eventDate = new Date(eventDateStr);
+  if (isNaN(eventDate.getTime())) return null;
+
+  const diffMs = eventDate.getTime() - today.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) return null;
+  if (diffDays === 0) return "TONIGHT";
+  if (diffDays === 1) return "TOMORROW";
+  if (diffDays <= 7) return "THIS WEEK";
+  return null;
+}
+
+interface SpecialEvent {
+  urgency: string;
+  label: string;
+  details: string;
+  link: string;
+}
+
+function getActiveSpecialEvents(): SpecialEvent[] {
+  const events: SpecialEvent[] = [];
+  for (const se of SPECIAL_EVENTS) {
+    const urgency = dateUrgency(se.date);
+    if (urgency) {
+      events.push({ urgency, label: se.label, details: se.details, link: se.link });
+    }
+  }
+  return events;
+}
+
+// ─── Live match types ───────────────────────────────────────────────
+
 interface LiveMatch {
   home: string;
   away: string;
@@ -60,10 +117,13 @@ export async function GET() {
     const matches = await fetchLiveMatches();
     const updatedAt = new Date().toISOString();
 
+    const specialEvents = getActiveSpecialEvents();
+
     if (matches.length > 0) {
       return NextResponse.json({
         mode: "live",
         matches,
+        specialEvents,
         nextFixtures: [],
         latestResults: [],
         updatedAt,
@@ -79,6 +139,7 @@ export async function GET() {
     return NextResponse.json({
       mode: "idle",
       matches: [],
+      specialEvents,
       nextFixtures: fixtures.slice(0, 8).map((f) => ({
         date: f.date,
         time: f.time,
@@ -97,6 +158,7 @@ export async function GET() {
     return NextResponse.json({
       mode: "idle",
       matches: [],
+      specialEvents: [],
       nextFixtures: [],
       latestResults: [],
       updatedAt: new Date().toISOString(),

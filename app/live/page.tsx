@@ -10,9 +10,17 @@ interface LiveMatch {
   matchId: string;
 }
 
+interface SpecialEvent {
+  urgency: string;
+  label: string;
+  details: string;
+  link: string;
+}
+
 interface LiveData {
   mode: "live" | "idle";
   matches: LiveMatch[];
+  specialEvents: SpecialEvent[];
   nextFixtures: {
     date: string;
     time: string;
@@ -141,6 +149,31 @@ export default function LivePage() {
                 {match.away}
               </p>
             </div>
+          ))}
+        </div>
+      )}
+
+      {/* Special events */}
+      {!isLive && data && data.specialEvents && data.specialEvents.length > 0 && (
+        <div className="mb-8 space-y-4">
+          {data.specialEvents.map((event, i) => (
+            <Link
+              key={i}
+              href={event.link}
+              className="block bg-navy-light/50 border-2 border-gold/40 rounded-xl p-5 sm:p-6 hover:border-gold/60 transition-colors"
+            >
+              <span className="inline-flex items-center gap-2 bg-[#e24b4a] text-white text-xs font-bold px-3 py-1 rounded mb-3">
+                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                {event.urgency}
+              </span>
+              <p className="text-xl sm:text-2xl font-bold text-white mb-1">
+                {event.label}
+              </p>
+              <p className="text-gray-400 text-sm mb-3">{event.details}</p>
+              <span className="text-gold text-sm font-medium">
+                View draw &rarr;
+              </span>
+            </Link>
           ))}
         </div>
       )}
