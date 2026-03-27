@@ -32,6 +32,11 @@ const SEMI_FINALS = [
   },
 ];
 
+const SF1_WINNER: string = "Abbey A";
+const SF2_WINNER: string = "Lochside Tavern";
+const FINAL_SCORE: string = "4 - 2";
+const CHAMPION: string = "Abbey A";
+
 async function fetchLiveScore(matchId: string): Promise<{ home: number; away: number } | null> {
   try {
     const res = await fetch(
@@ -93,13 +98,12 @@ function getWinner(
 }
 
 export default async function LeagueCompetitionsPage() {
-  const [groupTable, groupResults, knockoutResults, liveScore1, liveScore2, liveFinal] = await Promise.all([
+  const [groupTable, groupResults, knockoutResults, liveScore1, liveScore2] = await Promise.all([
     getTableByCompetition(COMPETITIONS.TEAM_COMP_WK2),
     getResultsByCompetition(COMPETITIONS.TEAM_COMP_WK2),
     getResultsByCompetition(COMPETITIONS.TEAM_COMP),
     fetchLiveScore(SEMI_FINALS[0].matchId),
     fetchLiveScore(SEMI_FINALS[1].matchId),
-    fetchLiveScore("315619"),
   ]);
 
   // Match knockout results to semi-finals
@@ -111,15 +115,7 @@ export default async function LeagueCompetitionsPage() {
   const sf2Winner = getWinner(sf2Result, SEMI_FINALS[1].home, SEMI_FINALS[1].away)
     ?? (liveScore2 && liveScore2.home >= 4 ? SEMI_FINALS[1].home : liveScore2 && liveScore2.away >= 4 ? SEMI_FINALS[1].away : null);
 
-  // Check for final result
-  const finalResult =
-    sf1Winner && sf2Winner
-      ? findResult(knockoutResults, sf1Winner, sf2Winner)
-      : undefined;
-  const champion =
-    finalResult && sf1Winner && sf2Winner
-      ? getWinner(finalResult, sf1Winner, sf2Winner)
-      : null;
+  // Final result is hardcoded — Abbey A 4-2 Lochside Tavern
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
@@ -264,65 +260,28 @@ export default async function LeagueCompetitionsPage() {
             The Final
           </span>
 
-          {liveFinal && !finalResult && sf1Winner && sf2Winner && (
-            <span className="inline-flex items-center gap-1 text-xs text-[#e24b4a] font-bold animate-pulse mb-3">
-              <span className="w-1.5 h-1.5 bg-[#e24b4a] rounded-full" />
-              LIVE
-            </span>
-          )}
-
-          {champion && finalResult ? (
-            <>
-              <div className="flex items-center justify-center gap-4 sm:gap-6">
-                <span
-                  className={`text-lg sm:text-xl font-bold ${
-                    champion === sf1Winner ? "text-gold" : "text-gray-500"
-                  }`}
-                >
-                  {sf1Winner}
-                </span>
-                <span className="text-gold font-bold text-lg sm:text-xl bg-navy/60 rounded px-3 py-1">
-                  {finalResult.score}
-                </span>
-                <span
-                  className={`text-lg sm:text-xl font-bold ${
-                    champion === sf2Winner ? "text-gold" : "text-gray-500"
-                  }`}
-                >
-                  {sf2Winner}
-                </span>
-              </div>
-              <p className="text-gold font-bold mt-4">
-                {champion} — Team Competition Champions 2026
-              </p>
-            </>
-          ) : sf1Winner && sf2Winner ? (
-            <div className="flex items-center justify-center gap-4 sm:gap-6">
-              <span className={`text-lg sm:text-xl font-bold ${liveFinal && liveFinal.home > liveFinal.away ? "text-gold" : "text-white"}`}>
-                {sf1Winner}
+          <div className="flex items-center justify-center gap-4 sm:gap-6">
+              <span
+                className={`text-lg sm:text-xl font-bold ${
+                  CHAMPION === SF1_WINNER ? "text-gold" : "text-gray-500"
+                }`}
+              >
+                {SF1_WINNER}
               </span>
-              {liveFinal ? (
-                <span className="text-gold font-bold text-lg sm:text-xl bg-navy/60 rounded px-3 py-1 tabular-nums">
-                  {liveFinal.home} - {liveFinal.away}
-                </span>
-              ) : (
-                <span className="text-gold/40 text-sm font-bold">vs</span>
-              )}
-              <span className={`text-lg sm:text-xl font-bold ${liveFinal && liveFinal.away > liveFinal.home ? "text-gold" : "text-white"}`}>
-                {sf2Winner}
+              <span className="text-gold font-bold text-lg sm:text-xl bg-navy/60 rounded px-3 py-1">
+                {FINAL_SCORE}
+              </span>
+              <span
+                className={`text-lg sm:text-xl font-bold ${
+                  CHAMPION === SF2_WINNER ? "text-gold" : "text-gray-500"
+                }`}
+              >
+                {SF2_WINNER}
               </span>
             </div>
-          ) : (
-            <div className="flex items-center justify-center gap-4 sm:gap-6">
-              <span className={`text-lg sm:text-xl font-bold ${sf1Winner ? "text-gold" : "text-gray-500"}`}>
-                {sf1Winner || "Winner SF1"}
-              </span>
-              <span className="text-gold/40 text-sm font-bold">vs</span>
-              <span className={`text-lg sm:text-xl font-bold ${sf2Winner ? "text-gold" : "text-gray-500"}`}>
-                {sf2Winner || "Winner SF2"}
-              </span>
-            </div>
-          )}
+            <p className="text-gold font-bold mt-4 text-lg">
+              🏆 {CHAMPION} — Team Competition Champions 2026
+            </p>
 
           <p className="text-gray-500 text-xs mt-4">
             Venue: Normandy Bar
