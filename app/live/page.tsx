@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 
 interface LiveMatch {
@@ -32,14 +32,63 @@ interface LiveData {
   updatedAt: string;
 }
 
-const REFRESH_INTERVAL = 30;
+const REFRESH_INTERVAL = 10;
+
+function isMatchWindow(): boolean {
+  const now = new Date();
+  const uk = new Date(
+    now.toLocaleString("en-US", { timeZone: "Europe/London" }),
+  );
+  const day = uk.getDay(); // 0=Sun, 5=Fri
+  const mins = uk.getHours() * 60 + uk.getMinutes();
+
+  // Friday 19:00-23:59
+  if (day === 5 && mins >= 19 * 60) return true;
+  // Saturday 00:00-01:00 (continuation of Friday night)
+  if (day === 6 && mins <= 60) return true;
+
+  return false;
+}
+
+function shouldRefresh(data: LiveData | null): boolean {
+  // Always refresh if live matches detected
+  if (data?.mode === "live" && data.matches.length > 0) return true;
+  // Always refresh if there's a TONIGHT special event
+  if (data?.specialEvents?.some((e) => e.urgency === "TONIGHT")) return true;
+  // Refresh during match window
+  return isMatchWindow();
+}
 
 export default function LivePage() {
   const [data, setData] = useState<LiveData | null>(null);
   const [countdown, setCountdown] = useState(REFRESH_INTERVAL);
   const [loading, setLoading] = useState(true);
+  const [autoRefresh, setAutoRefresh] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const dataRef = useRef<LiveData | null>(null);
+
+  const clearTimers = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+  }, []);
+
+  const startTimers = useCallback(
+    (fetchFn: () => Promise<void>) => {
+      clearTimers();
+      intervalRef.current = setInterval(fetchFn, REFRESH_INTERVAL * 1000);
+      countdownRef.current = setInterval(() => {
+        setCountdown((prev) => (prev <= 1 ? REFRESH_INTERVAL : prev - 1));
+      }, 1000);
+    },
+    [clearTimers],
+  );
 
   useEffect(() => {
     async function fetchLive() {
@@ -48,6 +97,11 @@ export default function LivePage() {
         if (!res.ok) return;
         const json: LiveData = await res.json();
         setData(json);
+        dataRef.current = json;
+
+        // Re-evaluate auto-refresh after each fetch
+        const should = shouldRefresh(json);
+        setAutoRefresh(should);
       } catch {
         // fail silently
       } finally {
@@ -56,21 +110,48 @@ export default function LivePage() {
       }
     }
 
+    // Initial fetch
     fetchLive();
 
-    // Auto-refresh every 30 seconds
-    intervalRef.current = setInterval(fetchLive, REFRESH_INTERVAL * 1000);
-
-    // Countdown timer — tick every second
-    countdownRef.current = setInterval(() => {
-      setCountdown((prev) => (prev <= 1 ? REFRESH_INTERVAL : prev - 1));
-    }, 1000);
+    // Check match window every 60s (handles 19:00 transition)
+    const windowCheck = setInterval(() => {
+      const should = shouldRefresh(dataRef.current);
+      setAutoRefresh(should);
+    }, 60_000);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (countdownRef.current) clearInterval(countdownRef.current);
+      clearTimers();
+      clearInterval(windowCheck);
     };
-  }, []);
+  }, [clearTimers]);
+
+  // Start/stop polling based on autoRefresh state
+  useEffect(() => {
+    if (autoRefresh) {
+      async function fetchLive() {
+        try {
+          const res = await fetch("/api/live");
+          if (!res.ok) return;
+          const json: LiveData = await res.json();
+          setData(json);
+          dataRef.current = json;
+
+          const should = shouldRefresh(json);
+          setAutoRefresh(should);
+        } catch {
+          // fail silently
+        } finally {
+          setCountdown(REFRESH_INTERVAL);
+        }
+      }
+
+      startTimers(fetchLive);
+    } else {
+      clearTimers();
+    }
+
+    return clearTimers;
+  }, [autoRefresh, startTimers, clearTimers]);
 
   function formatTime(isoString: string): string {
     try {
@@ -122,8 +203,8 @@ export default function LivePage() {
           </>
         )}
 
-        {/* Refresh info */}
-        {data && (
+        {/* Refresh info — only shown when auto-refreshing */}
+        {autoRefresh && data && (
           <div className="mt-3 flex items-center justify-center gap-4 text-xs text-gray-500">
             <span>Updated {formatTime(data.updatedAt)}</span>
             <span>Refreshing in {countdown}s</span>
