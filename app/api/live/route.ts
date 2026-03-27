@@ -70,20 +70,25 @@ interface LiveMatch {
 
 async function fetchLiveMatches(): Promise<LiveMatch[]> {
   try {
-    const res = await fetch(
-      "https://live.leagueapplive.com/livedata.php?sitename=dumfries",
-      { cache: "no-store" },
-    );
-    if (!res.ok) return [];
-    const html = await res.text();
-    if (!html.trim()) return [];
+    const [defaultRes, compRes] = await Promise.all([
+      fetch("https://live.leagueapplive.com/livedata.php?sitename=dumfries", { cache: "no-store" }),
+      fetch("https://live.leagueapplive.com/livedata.php?sitename=dumfries&competitionid=1397", { cache: "no-store" }),
+    ]);
 
-    const $ = cheerio.load(html);
+    const [defaultHtml, compHtml] = await Promise.all([
+      defaultRes.ok ? defaultRes.text() : "",
+      compRes.ok ? compRes.text() : "",
+    ]);
+
+    const combinedHtml = defaultHtml + compHtml;
+    if (!combinedHtml.trim()) return [];
+
+    const $ = cheerio.load(combinedHtml);
     const matches: LiveMatch[] = [];
 
     $("a[href*='matchgames']").each((_, el) => {
       const scoreText = $(el).text().trim();
-      const scoreMatch = scoreText.match(/\[(\d+)\s*-\s*(\d+)\]/);
+      const scoreMatch = scoreText.match(/(\d+)-(\d+)/);
       if (!scoreMatch) return;
 
       const score = `${scoreMatch[1]} - ${scoreMatch[2]}`;
@@ -106,7 +111,13 @@ async function fetchLiveMatches(): Promise<LiveMatch[]> {
       }
     });
 
-    return matches;
+    // Deduplicate by matchId
+    const seen = new Set<string>();
+    return matches.filter((m) => {
+      if (seen.has(m.matchId)) return false;
+      seen.add(m.matchId);
+      return true;
+    });
   } catch {
     return [];
   }
