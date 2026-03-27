@@ -26,7 +26,6 @@ export interface TeamStanding {
   for: number;
   against: number;
   diff: number;
-  bonus: number;
   points: number;
 }
 
@@ -119,7 +118,7 @@ export async function getTableByCompetition(
 
   $("#top__contentTable tbody tr.dg_tr").each((_, row) => {
     const cells = $(row).find("td.x-blue_dg_td").toArray();
-    if (cells.length < 10) return;
+    if (cells.length < 9) return;
     teams.push({
       name: cellText($, cells[0]),
       played: parseInt(cellText($, cells[1])) || 0,
@@ -129,8 +128,7 @@ export async function getTableByCompetition(
       for: parseInt(cellText($, cells[5])) || 0,
       against: parseInt(cellText($, cells[6])) || 0,
       diff: parseInt(cellText($, cells[7])) || 0,
-      bonus: parseInt(cellText($, cells[8])) || 0,
-      points: parseInt(cellText($, cells[9])) || 0,
+      points: parseInt(cellText($, cells[8])) || 0,
     });
   });
 
@@ -174,7 +172,7 @@ export async function getLeagueTable(): Promise<TeamStanding[]> {
 
   $("#top__contentTable tbody tr.dg_tr").each((_, row) => {
     const cells = $(row).find("td.x-blue_dg_td").toArray();
-    if (cells.length < 10) return;
+    if (cells.length < 9) return;
     teams.push({
       name: cellText($, cells[0]),
       played: parseInt(cellText($, cells[1])) || 0,
@@ -184,8 +182,7 @@ export async function getLeagueTable(): Promise<TeamStanding[]> {
       for: parseInt(cellText($, cells[5])) || 0,
       against: parseInt(cellText($, cells[6])) || 0,
       diff: parseInt(cellText($, cells[7])) || 0,
-      bonus: parseInt(cellText($, cells[8])) || 0,
-      points: parseInt(cellText($, cells[9])) || 0,
+      points: parseInt(cellText($, cells[8])) || 0,
     });
   });
 
