@@ -114,7 +114,23 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-navy-dark/95 backdrop-blur border-b border-gold/20">
+    <header className="sticky top-0 z-50 bg-navy-dark/95 backdrop-blur border-b border-gold/20 relative overflow-hidden">
+      {/* Team photo strip */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'url(/team-header.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 20%',
+          mixBlendMode: 'multiply',
+          opacity: 0.45,
+          WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%)',
+          maskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%)',
+          pointerEvents: 'none',
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
 
