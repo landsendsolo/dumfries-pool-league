@@ -24,6 +24,7 @@ function formatTickerItem(text: string, isLive: boolean): ReactNode {
 export function Ticker({ initialData }: { initialData?: TickerData }) {
   const [data, setData] = useState<TickerData | null>(initialData ?? null);
   const [duration, setDuration] = useState<number | null>(null);
+  const [halfWidth, setHalfWidth] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const modeRef = useRef<string | null>(initialData?.mode ?? null);
@@ -75,9 +76,9 @@ export function Ticker({ initialData }: { initialData?: TickerData }) {
   useEffect(() => {
     if (!scrollRef.current) return;
     const scrollWidth = scrollRef.current.scrollWidth;
-    // translateX(-50%) moves half the total width (one copy)
     const dist = scrollWidth / 2;
     const speed = window.innerWidth < 640 ? MOBILE_SPEED : DESKTOP_SPEED;
+    setHalfWidth(dist);
     setDuration(dist / speed);
   }, [data]);
 
@@ -117,11 +118,13 @@ export function Ticker({ initialData }: { initialData?: TickerData }) {
           ref={scrollRef}
           className="flex whitespace-nowrap"
           style={{
-            animation: duration
-              ? `ticker-scroll ${duration.toFixed(1)}s linear infinite`
+            animation: duration && halfWidth
+              ? `ticker-scroll-px ${duration.toFixed(1)}s linear infinite`
               : "none",
             willChange: "transform",
             transform: "translateZ(0)",
+            // @ts-expect-error CSS custom property
+            "--ticker-dist": halfWidth ? `-${halfWidth}px` : "0px",
           }}
         >
           {[...data.items, ...data.items].map((item, i) => (

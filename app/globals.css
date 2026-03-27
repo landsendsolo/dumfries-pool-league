@@ -38,7 +38,13 @@ body {
   display: none;
 }
 
-/* Ticker scroll animation */
+/* Ticker scroll animation — uses pixel value via CSS custom property */
+@keyframes ticker-scroll-px {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(var(--ticker-dist)); }
+}
+
+/* Legacy — kept for admin ticker preview */
 @keyframes ticker-scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
