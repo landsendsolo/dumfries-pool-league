@@ -88,7 +88,7 @@ async function fetchLiveMatches(): Promise<LiveMatch[]> {
 
     $("a[href*='matchgames']").each((_, el) => {
       const scoreText = $(el).text().trim();
-      const scoreMatch = scoreText.match(/(\d+)-(\d+)/);
+      const scoreMatch = scoreText.match(/(\d+)\s*-\s*(\d+)/);
       if (!scoreMatch) return;
 
       const score = `${scoreMatch[1]} - ${scoreMatch[2]}`;
@@ -98,13 +98,11 @@ async function fetchLiveMatches(): Promise<LiveMatch[]> {
       const matchIdMatch = href.match(/matchid=(\d+)/);
       const matchId = matchIdMatch ? matchIdMatch[1] : "";
 
-      // Walk backwards and forwards from the link to find team names
-      const parent = $(el).parent();
-      const fullText = parent.text();
-      const parts = fullText.split(scoreText);
-      const home = parts[0]?.trim().replace(/\s+/g, " ");
-      const awayAndRest = parts[1]?.trim().replace(/\s+/g, " ");
-      const away = awayAndRest?.split(/\s{2,}/)?.[0]?.trim();
+      // Navigate to the row and extract team names from sibling cells
+      const row = $(el).closest("tr");
+      const cells = row.find("td");
+      const home = $(cells[1]).text().trim();
+      const away = $(cells[5]).text().trim();
 
       if (home && away) {
         matches.push({ home, away, score, matchId });
