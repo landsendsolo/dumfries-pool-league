@@ -66,7 +66,8 @@
       "entryDeadline": "Friday 27th March 2026 at 21:00",
       "hasSpreadsheet": false,
       "drawAvailable": false,
-      "notes": "Tournament Committee reviews all entries. Those previously ineligible remain ineligible."
+      "notes": "Tournament Committee reviews all entries. Those previously ineligible remain ineligible.",
+      "dumfriesEntries": ["Owen Bruce", "Rich Cooper", "Jayde Devlin", "Sean Rutherford", "Gav Hunter", "Mark Lockhart", "Derek Reid"]
     }
   ]
 }

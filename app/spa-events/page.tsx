@@ -201,6 +201,21 @@ export default async function SpaEventsPage() {
               )}
             </div>
 
+            {trophyEvent.dumfriesEntries && trophyEvent.dumfriesEntries.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-bold text-gold uppercase tracking-wider mb-2">
+                  Dumfries Entries — Awaiting Draw
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {trophyEvent.dumfriesEntries.map((name: string) => (
+                    <span key={name} className="text-xs bg-navy-dark/60 border border-gold/10 text-gray-300 px-3 py-1 rounded-full">
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {trophyEvent.drawAvailable ? (
               <Link
                 href={`/spa-events/${trophyEvent.id}`}

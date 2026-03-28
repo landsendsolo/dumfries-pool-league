@@ -21,6 +21,7 @@ export interface SpaEvent {
   entryFee?: string;
   entryDeadline?: string;
   notes?: string;
+  dumfriesEntries?: string[];
 }
 
 export interface SpaEventsData {
