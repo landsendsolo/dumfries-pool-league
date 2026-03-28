@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Admin-managed data files — never overwrite VPS state
+data/ticker-settings.json
+data/feedback.json
+data/spa-events/*/draw.json

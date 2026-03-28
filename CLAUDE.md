@@ -57,3 +57,10 @@
 - Registration method: TBC (open / invite only / registered players only)
 - Moderation: TBC (full controls / basic / none)
 - Note: Significant build — plan for 2-3 sessions
+
+## OUTPUT RULES — MANDATORY
+- NEVER use the Read tool when the user asks to see file contents
+- ALWAYS use bash cat to print file contents as plain text in the chat
+- NEVER summarise — print everything in full
+- Before making ANY fix, read the actual file first with: cat file.ts && echo "==DONE=="
+- If asked to read multiple files: cat file1.ts && echo "==FILE1==" && cat file2.ts && echo "==FILE2=="
