@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
 
     // Purge ticker cache so changes appear immediately
     revalidatePath("/api/ticker");
+    revalidatePath("/");
 
     return NextResponse.json(settings);
   } catch {

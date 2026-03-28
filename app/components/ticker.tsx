@@ -50,15 +50,14 @@ export function Ticker({ initialData }: { initialData?: TickerData }) {
     // Set up polling — check mode periodically
     function startPolling() {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      const interval = modeRef.current === "live" ? 30_000 : 300_000;
+      const interval = 5_000;
       intervalRef.current = setInterval(fetchTicker, interval);
     }
 
     startPolling();
     // Re-evaluate polling interval every 30s
     const modeCheck = setInterval(() => {
-      const currentInterval =
-        modeRef.current === "live" ? 30_000 : 300_000;
+      const currentInterval = 5_000;
       // Only restart if interval needs to change
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
