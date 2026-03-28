@@ -32,7 +32,7 @@ export function Ticker({ initialData }: { initialData?: TickerData }) {
   useEffect(() => {
     async function fetchTicker() {
       try {
-        const res = await fetch("/api/ticker");
+        const res = await fetch("/api/ticker", { cache: "no-store" });
         if (!res.ok) return;
         const json: TickerData = await res.json();
         setData(json);

@@ -1,7 +1,6 @@
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import type { CustomNewsItem } from "@/lib/ticker";
 
@@ -104,10 +103,6 @@ export async function POST(request: NextRequest) {
     };
 
     await writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2), "utf-8");
-
-    // Purge ticker cache so changes appear immediately
-    revalidatePath("/api/ticker");
-    revalidatePath("/");
 
     return NextResponse.json(settings);
   } catch {
