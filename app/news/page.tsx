@@ -48,7 +48,7 @@ function ArticleCard({ article }: { article: typeof articles[0] }) {
     <details className="group bg-navy-light/50 border border-gold/10 rounded-xl overflow-hidden hover:border-gold/30 transition-colors">
       <summary className="cursor-pointer list-none">
         {/* Image */}
-        <div className="relative w-full aspect-video overflow-hidden bg-navy-dark">
+        <div className="relative w-full aspect-square overflow-hidden bg-navy-dark">
           <Image
             src={article.image}
             alt={article.imageAlt}
