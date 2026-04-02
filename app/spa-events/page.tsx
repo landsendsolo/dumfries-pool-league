@@ -112,7 +112,7 @@ export default async function SpaEventsPage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-white">SPA Calendar 2026</h1>
         <p className="text-gray-400 text-sm mt-1">
           All upcoming Scottish Pool Association events. Any Dumfries player can enter — check{" "}
-          <a href="https://scottishpool.org" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">
+          <a href="https://www.facebook.com/ScottishPool" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">
             scottishpool.org
           </a>{" "}
           for entry details. For Dumfries area entries see{" "}
