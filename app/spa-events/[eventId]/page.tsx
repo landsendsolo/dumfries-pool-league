@@ -68,7 +68,7 @@ export default async function EventDrawPage({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
       {/* Back link */}
       <Link
-        href="/spa-events"
+        href="/dumfries-spa"
         className="inline-flex items-center gap-1 text-gray-400 text-sm hover:text-gold transition-colors mb-6"
       >
         <svg
@@ -84,7 +84,7 @@ export default async function EventDrawPage({
             d="M15 19l-7-7 7-7"
           />
         </svg>
-        All SPA Events
+        Dumfries SPA Entries
       </Link>
 
       {/* Header */}
