@@ -23,6 +23,23 @@ const articles = [
     sponsor: "N’Dulge",
   },
   {
+    id: "super11s-champions",
+    headline: "Team Dumfries — SPA David Duncan Super 11s Premier Division Champions 2026",
+    date: "8th March 2026",
+    excerpt: "Ladies and gentlemen, your 2026 David Duncan SPA Super 11 Premier Division Champions — Team Dumfries. A huge congratulations to the South of Scotland team who found a new gear on knockout Sunday.",
+    image: "/images/news/super11s-champions.jpg",
+    imageAlt: "Team Dumfries with the SPA David Duncan Super 11s Premier Division trophy",
+    body: [
+      "Ladies and gentlemen, your 2026 David Duncan SPA Super 11 Premier Division Champions, Team Dumfries.",
+      "A huge congratulations to the South of Scotland team who appeared to find a new gear on knockout Sunday.",
+      "A special team, presented their medals and trophy from the family of our late Secretary David Duncan. It was an honour to meet you all.",
+      "Well played also to Midlothian A, newly promoted to the Premier Event gave it a go, however came up short in the final.",
+      "A superb advert for SPA pool.",
+    ],
+    hashtags: ["Super11s", "TeamDumfries", "Champions2026", "DavidDuncanTrophy", "SPA"],
+    sponsor: "SPA",
+  },
+  {
     id: "abbey-team-champions",
     headline: "Abbey A Win Team Competition — Unbeaten Season Continues",
     date: "28th March 2026",
