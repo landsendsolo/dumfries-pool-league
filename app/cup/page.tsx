@@ -1,16 +1,11 @@
-import {
-  COMPETITIONS,
-  getTableByCompetition,
-  getResultsByCompetition,
-} from "@/lib/leagueapp";
-import type { TeamStanding, Result } from "@/lib/leagueapp";
+"use client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 30;
+import { useState } from "react";
+import type { FormEvent } from "react";
 
-export const metadata = {
-  title: "League Competitions | Dumfries Pool League",
-};
+const FORMSPREE_URL = "https://formspree.io/f/xnjoblqb";
+
+type FormStatus = "idle" | "submitting" | "success" | "error";
 
 // ── Team Competition — completed ──────────────────────────────
 const SF1_WINNER: string = "Abbey A";
@@ -23,34 +18,209 @@ const SEMI_FINALS = [
   { label: "Semi Final 2", home: "Lochside Tavern", away: "Normandy A", venue: "Normandy Bar", time: "19:30", homeScore: 4, awayScore: 3 },
 ];
 
-function parseScore(score: string): { homeGoals: number; awayGoals: number } | null {
-  const m = score.match(/(\d+)\s*-\s*(\d+)/);
-  if (!m) return null;
-  return { homeGoals: parseInt(m[1]), awayGoals: parseInt(m[2]) };
-}
+function EntryForm() {
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [isDplPlayer, setIsDplPlayer] = useState<string>("");
+  const [wantsToJoin, setWantsToJoin] = useState<string>("");
 
-function findResult(results: Result[], home: string, away: string): Result | undefined {
-  return results.find(
-    (r) => (r.home === home && r.away === away) || (r.home === away && r.away === home),
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("submitting");
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        setStatus("success");
+        form.reset();
+        setIsDplPlayer("");
+        setWantsToJoin("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-5 sm:p-6 mt-6">
+      <h3 className="text-gold font-bold text-sm uppercase tracking-wider mb-1">Enter the Competition</h3>
+      <p className="text-gray-400 text-xs mb-4">
+        Complete the form below then pay your £5 entry fee by bank transfer to{" "}
+        <span className="text-white font-medium">Dumfries Pool League</span>,{" "}
+        Sort: <span className="text-white font-medium">80-22-60</span>,{" "}
+        Account: <span className="text-white font-medium">25616367</span>{" "}
+        using your name as the reference.
+      </p>
+
+      {status === "success" ? (
+        <div className="bg-green-900/30 border border-green-500/30 rounded-lg p-4 text-green-400 text-sm">
+          Entry received! Please remember to send your £5 entry fee. We will be in touch with draw details.
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Hidden CC field for Donald */}
+          <input type="hidden" name="_cc" value="mcdougall64@icloud.com" />
+          <input type="hidden" name="_subject" value="Dumfries Singles 2026 — New Entry" />
+
+          {/* Name */}
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">
+              Full Name <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              required
+              className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
+              placeholder="Your full name"
+            />
+          </div>
+
+          {/* Mobile */}
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">
+              Mobile Number <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="tel"
+              name="mobile"
+              required
+              className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
+              placeholder="For draw notifications"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
+              placeholder="Optional"
+            />
+          </div>
+
+          {/* DPL Player */}
+          <div>
+            <label className="block text-xs text-gray-400 mb-2">
+              Are you a registered DPL player? <span className="text-red-400">*</span>
+            </label>
+            <div className="flex gap-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="dpl_player"
+                  value="Yes"
+                  required
+                  onChange={() => { setIsDplPlayer("Yes"); setWantsToJoin(""); }}
+                  className="accent-gold"
+                />
+                <span className="text-white text-sm">Yes</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="dpl_player"
+                  value="No"
+                  onChange={() => setIsDplPlayer("No")}
+                  className="accent-gold"
+                />
+                <span className="text-white text-sm">No</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Want to join DPL — only shown if not a DPL player */}
+          {isDplPlayer === "No" && (
+            <div>
+              <label className="block text-xs text-gray-400 mb-2">
+                Would you like to join the Dumfries Pool League? <span className="text-red-400">*</span>
+              </label>
+              <div className="flex gap-3 mb-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="wants_to_join"
+                    value="Yes"
+                    required
+                    onChange={() => setWantsToJoin("Yes")}
+                    className="accent-gold"
+                  />
+                  <span className="text-white text-sm">Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="wants_to_join"
+                    value="No"
+                    onChange={() => setWantsToJoin("No")}
+                    className="accent-gold"
+                  />
+                  <span className="text-white text-sm">No</span>
+                </label>
+              </div>
+              {wantsToJoin === "Yes" && (
+                <div className="bg-gold/5 border border-gold/20 rounded-lg p-3 text-xs text-gray-300 leading-relaxed">
+                  To enter SPA events as a Dumfries player you must be a registered DPL member playing for a current team, playing under Blackball Rules. This would require joining a current DPL team and ceasing any International Pool Rules events. A committee member will be in touch to discuss joining.
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Payment confirmation */}
+          <div>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="payment_confirmed"
+                value="Confirmed"
+                required
+                className="mt-0.5 w-4 h-4 accent-gold shrink-0"
+              />
+              <span className="text-gray-300 text-xs leading-relaxed">
+                I confirm I will now send the £5 entry fee to{" "}
+                <span className="text-white font-medium">Dumfries Pool League</span>,{" "}
+                Sort: <span className="text-white font-medium">80-22-60</span>,{" "}
+                Account: <span className="text-white font-medium">25616367</span>,{" "}
+                using my name as the reference. <span className="text-red-400">*</span>
+              </span>
+            </label>
+          </div>
+
+          {status === "error" && (
+            <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm">
+              Something went wrong. Please try again or contact us directly.
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={status === "submitting"}
+            className="w-full sm:w-auto bg-gold text-navy font-bold text-sm px-6 py-3 rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-60 cursor-pointer"
+          >
+            {status === "submitting" ? "Submitting..." : "Submit Entry"}
+          </button>
+        </form>
+      )}
+    </div>
   );
 }
 
-export default async function LeagueCompetitionsPage() {
-  const [groupTable, groupResults, knockoutResults] = await Promise.all([
-    getTableByCompetition(COMPETITIONS.TEAM_COMP_WK2),
-    getResultsByCompetition(COMPETITIONS.TEAM_COMP_WK2),
-    getResultsByCompetition(COMPETITIONS.TEAM_COMP),
-  ]);
-
-  const sf1Result = findResult(knockoutResults, SEMI_FINALS[0].home, SEMI_FINALS[0].away);
-  const sf2Result = findResult(knockoutResults, SEMI_FINALS[1].home, SEMI_FINALS[1].away);
-
+export default function LeagueCompetitionsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
       {/* ── SINGLES COMPETITION — UPCOMING ── */}
       <div className="mb-12">
-        {/* Header */}
         <div className="text-center mb-8">
           <span className="inline-block bg-gold/10 border border-gold/30 text-gold text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
             Upcoming Competition
@@ -63,7 +233,6 @@ export default async function LeagueCompetitionsPage() {
           </p>
         </div>
 
-        {/* Key details cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 text-center">
             <p className="text-gold font-bold text-lg">17th Apr</p>
@@ -83,7 +252,6 @@ export default async function LeagueCompetitionsPage() {
           </div>
         </div>
 
-        {/* Info block */}
         <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-5 sm:p-6 mb-6">
           <div className="grid sm:grid-cols-2 gap-4 text-sm">
             <div className="space-y-3">
@@ -117,18 +285,7 @@ export default async function LeagueCompetitionsPage() {
           </div>
         </div>
 
-        {/* Entry payment */}
-        <div className="bg-gold/5 border border-gold/30 rounded-xl p-5 text-center">
-          <p className="text-gold font-bold text-sm uppercase tracking-wider mb-2">How to Enter</p>
-          <p className="text-gray-300 text-sm mb-3">
-            Pay £5 entry by bank transfer — use your name as the reference
-          </p>
-          <div className="inline-flex flex-col items-center gap-1">
-            <span className="text-white font-semibold text-sm">Dumfries Pool League</span>
-            <span className="text-gray-400 text-sm font-mono">25616367 &nbsp;|&nbsp; 80-22-60</span>
-          </div>
-          <p className="text-gray-500 text-xs mt-3">Entry deadline: Friday 10th April 2026</p>
-        </div>
+        <EntryForm />
       </div>
 
       {/* ── TEAM COMPETITION — COMPLETED ── */}
@@ -142,17 +299,12 @@ export default async function LeagueCompetitionsPage() {
               Completed
             </span>
           </div>
-          <svg
-            className="w-4 h-4 text-gold transition-transform group-open:rotate-180 shrink-0"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor"
-          >
+          <svg className="w-4 h-4 text-gold transition-transform group-open:rotate-180 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </summary>
 
         <div className="mt-2 space-y-4">
-
-          {/* Champion banner */}
           <div className="bg-gold/10 border-2 border-gold/40 rounded-xl p-6 text-center">
             <span className="text-xs font-bold text-gold uppercase tracking-widest block mb-2">Champions 2026</span>
             <p className="text-white font-bold text-2xl sm:text-3xl">🏆 {CHAMPION}</p>
@@ -160,53 +312,30 @@ export default async function LeagueCompetitionsPage() {
             <p className="text-gray-500 text-xs mt-1">Normandy Bar — 27th March 2026</p>
           </div>
 
-          {/* Final */}
           <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-5 sm:p-6 text-center">
             <span className="text-xs font-bold text-gold uppercase tracking-widest block mb-4">The Final</span>
             <div className="flex items-center justify-center gap-4 sm:gap-6">
-              <span className={`text-lg sm:text-xl font-bold ${CHAMPION === SF1_WINNER ? "text-gold" : "text-gray-500"}`}>
-                {SF1_WINNER}
-              </span>
-              <span className="text-gold font-bold text-lg sm:text-xl bg-navy/60 rounded px-3 py-1">
-                {FINAL_SCORE}
-              </span>
-              <span className={`text-lg sm:text-xl font-bold ${CHAMPION === SF2_WINNER ? "text-gold" : "text-gray-500"}`}>
-                {SF2_WINNER}
-              </span>
+              <span className={`text-lg sm:text-xl font-bold ${CHAMPION === SF1_WINNER ? "text-gold" : "text-gray-500"}`}>{SF1_WINNER}</span>
+              <span className="text-gold font-bold text-lg sm:text-xl bg-navy/60 rounded px-3 py-1">{FINAL_SCORE}</span>
+              <span className={`text-lg sm:text-xl font-bold ${CHAMPION === SF2_WINNER ? "text-gold" : "text-gray-500"}`}>{SF2_WINNER}</span>
             </div>
           </div>
 
-          {/* Semi Finals */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {SEMI_FINALS.map((sf, i) => {
-              const result = i === 0 ? sf1Result : sf2Result;
-              const parsed = result ? parseScore(result.score) : null;
-              let homeScore: number | null = null;
-              let awayScore: number | null = null;
-              if (parsed && result) {
-                if (result.home === sf.home) {
-                  homeScore = parsed.homeGoals;
-                  awayScore = parsed.awayGoals;
-                } else {
-                  homeScore = parsed.awayGoals;
-                  awayScore = parsed.homeGoals;
-                }
-              }
-              const displayHome = homeScore ?? sf.homeScore;
-              const displayAway = awayScore ?? sf.awayScore;
-              const winner = displayHome > displayAway ? sf.home : sf.away;
+            {SEMI_FINALS.map((sf) => {
+              const winner = sf.homeScore > sf.awayScore ? sf.home : sf.away;
               return (
                 <div key={sf.label} className="bg-navy-light/50 border border-gold/10 rounded-xl p-4 sm:p-5">
                   <span className="text-xs font-bold text-gold uppercase tracking-wider block mb-3">{sf.label}</span>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className={`text-base font-bold ${winner === sf.home ? "text-gold" : "text-gray-500"}`}>{sf.home}</span>
-                      <span className={`text-lg font-bold tabular-nums ${winner === sf.home ? "text-gold" : "text-gray-500"}`}>{displayHome}</span>
+                      <span className={`text-lg font-bold tabular-nums ${winner === sf.home ? "text-gold" : "text-gray-500"}`}>{sf.homeScore}</span>
                     </div>
                     <div className="border-t border-gold/10" />
                     <div className="flex items-center justify-between">
                       <span className={`text-base font-bold ${winner === sf.away ? "text-gold" : "text-gray-500"}`}>{sf.away}</span>
-                      <span className={`text-lg font-bold tabular-nums ${winner === sf.away ? "text-gold" : "text-gray-500"}`}>{displayAway}</span>
+                      <span className={`text-lg font-bold tabular-nums ${winner === sf.away ? "text-gold" : "text-gray-500"}`}>{sf.awayScore}</span>
                     </div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-gold/10 flex justify-between text-xs text-gray-500">
@@ -217,67 +346,6 @@ export default async function LeagueCompetitionsPage() {
               );
             })}
           </div>
-
-          {/* Group Stage */}
-          <details className="group/inner">
-            <summary className="bg-navy-light/30 border border-gold/10 rounded-xl px-5 py-3 cursor-pointer list-none flex items-center justify-between hover:border-gold/20 transition-colors">
-              <span className="text-xs font-bold text-gold/70 uppercase tracking-wider">Group Stage — 12th December 2025</span>
-              <svg className="w-3.5 h-3.5 text-gold/70 transition-transform group-open/inner:rotate-180 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </summary>
-            <div className="mt-2 bg-navy-light/30 border border-gold/10 rounded-xl p-4 sm:p-5 space-y-5">
-              {groupTable.length > 0 && (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-gold/80 text-xs uppercase tracking-wider">
-                        <th className="text-left py-2 pr-2">Team</th>
-                        <th className="text-center px-1">P</th>
-                        <th className="text-center px-1">W</th>
-                        <th className="text-center px-1">D</th>
-                        <th className="text-center px-1">L</th>
-                        <th className="text-center px-1">F</th>
-                        <th className="text-center px-1">A</th>
-                        <th className="text-center px-1">+/-</th>
-                        <th className="text-center pl-1">Pts</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {groupTable.map((team: TeamStanding, i: number) => (
-                        <tr key={team.name} className={`border-t border-gold/5 ${i < 4 ? "bg-gold/5" : ""}`}>
-                          <td className="py-2 pr-2 text-white font-medium whitespace-nowrap">{team.name}</td>
-                          <td className="text-center text-gray-400 px-1">{team.played}</td>
-                          <td className="text-center text-gray-400 px-1">{team.won}</td>
-                          <td className="text-center text-gray-400 px-1">{team.drawn}</td>
-                          <td className="text-center text-gray-400 px-1">{team.lost}</td>
-                          <td className="text-center text-gray-400 px-1">{team.for}</td>
-                          <td className="text-center text-gray-400 px-1">{team.against}</td>
-                          <td className="text-center text-gray-400 px-1">{team.diff}</td>
-                          <td className="text-center text-gold font-bold pl-1">{team.points}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-              {groupResults.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-bold text-gold/60 uppercase tracking-wider mb-3">Results</h3>
-                  <div className="space-y-2">
-                    {groupResults.map((r: Result, i: number) => (
-                      <div key={i} className="flex items-center justify-between bg-navy-dark/30 rounded-lg px-3 py-2 text-sm">
-                        <span className="text-white flex-1 text-right truncate mr-2">{r.home}</span>
-                        <span className="text-gold font-bold shrink-0 bg-navy/60 rounded px-2 py-0.5 text-xs">{r.score}</span>
-                        <span className="text-white flex-1 truncate ml-2">{r.away}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </details>
-
         </div>
       </details>
 
