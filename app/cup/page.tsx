@@ -132,12 +132,7 @@ export default async function LeagueCompetitionsPage() {
             Finals Night hosted by The Normandy Bar
           </span>
         </div>
-        <div className="block">
-          <span className="inline-flex items-center gap-2 bg-[#e24b4a] text-white text-sm font-bold px-4 py-2 rounded-lg">
-            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-            TONIGHT — 27th March 2026
-          </span>
-        </div>
+
       </div>
 
       {/* Semi Finals */}
