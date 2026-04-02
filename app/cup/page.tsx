@@ -13,10 +13,10 @@ export const metadata = {
 };
 
 // ── Team Competition — completed ──────────────────────────────
-const SF1_WINNER = "Abbey A";
-const SF2_WINNER = "Lochside Tavern";
-const FINAL_SCORE = "4 - 2";
-const CHAMPION = "Abbey A";
+const SF1_WINNER: string = "Abbey A";
+const SF2_WINNER: string = "Lochside Tavern";
+const FINAL_SCORE: string = "4 - 2";
+const CHAMPION: string = "Abbey A";
 
 const SEMI_FINALS = [
   { label: "Semi Final 1", home: "Abbey A", away: "Abbey B", venue: "Abbey", time: "19:30", homeScore: 4, awayScore: 1 },
