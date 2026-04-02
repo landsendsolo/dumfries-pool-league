@@ -191,7 +191,7 @@ function EntryForm() {
                 <span className="text-white font-medium">Dumfries Pool League</span>,{" "}
                 Sort: <span className="text-white font-medium">80-22-60</span>,{" "}
                 Account: <span className="text-white font-medium">25616367</span>,{" "}
-                using my name as the reference. <span className="text-red-400">*</span>
+                with my name and “singles” as the reference please. <span className="text-red-400">*</span>
               </span>
             </label>
           </div>
