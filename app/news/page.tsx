@@ -6,22 +6,6 @@ export const metadata = {
 
 const articles = [
   {
-    id: "abbey-team-champions",
-    headline: "Abbey A Win Team Competition — Unbeaten Season Continues",
-    date: "28th March 2026",
-    excerpt: "Abbey A are crowned Team Competition Champions 2026, beating Lochside Tavern 4-2 in the Final at the Normandy Bar — and they remain unbeaten all season.",
-    image: "/images/news/abbey-team-champions.png",
-    imageAlt: "Abbey A with the Team Competition trophy at the Normandy Bar",
-    body: [
-      "Team Competition Sponsored by The Normandy Bar.",
-      "Semi Final results: Abbey A 4-1 Abbey B. Lochside Tavern 3-3 Normandy A (Lochside Tavern win on penalties).",
-      "Final: Abbey A 4-2 Lochside Tavern.",
-      "Congratulations to Abbey A on winning the Team Competition and continuing their unbeaten season. A fantastic achievement from a brilliant team.",
-    ],
-    hashtags: ["TeamCompetition", "AbbeyA", "Champions2026", "UnbeatenSeason"],
-    sponsor: "Normandy Bar",
-  },
-  {
     id: "mvp-paul-harkness",
     headline: "N’Dulge MVP Award — Paul Harkness Leads the Race",
     date: "30th March 2026",
