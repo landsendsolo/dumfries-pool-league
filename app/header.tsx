@@ -11,6 +11,7 @@ type NavItem =
 
 const navItems: NavItem[] = [
   { type: "link", href: "/", label: "Home" },
+  { type: "link", href: "/news", label: "News" },
   {
     type: "dropdown",
     key: "league",
@@ -41,7 +42,6 @@ const navItems: NavItem[] = [
       { href: "/documents", label: "Documents" },
     ],
   },
-  { type: "link", href: "/news", label: "News" },
   { type: "link", href: "/sponsors", label: "Sponsors" },
 ];
 

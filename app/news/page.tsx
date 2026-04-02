@@ -22,6 +22,22 @@ const articles = [
     hashtags: ["MVP", "DumfriesPool", "RaceToTheFinish"],
     sponsor: "N’Dulge",
   },
+  {
+    id: "abbey-team-champions",
+    headline: "Abbey A Win Team Competition — Unbeaten Season Continues",
+    date: "28th March 2026",
+    excerpt: "Abbey A are crowned Team Competition Champions 2026, beating Lochside Tavern 4-2 in the Final at the Normandy Bar — and they remain unbeaten all season.",
+    image: "/images/news/abbey-team-champions.png",
+    imageAlt: "Abbey A with the Team Competition trophy at the Normandy Bar",
+    body: [
+      "Team Competition Sponsored by The Normandy Bar.",
+      "Semi Final results: Abbey A 4-1 Abbey B. Lochside Tavern 3-3 Normandy A (Lochside Tavern win on penalties).",
+      "Final: Abbey A 4-2 Lochside Tavern.",
+      "Congratulations to Abbey A on winning the Team Competition and continuing their unbeaten season. A fantastic achievement from a brilliant team.",
+    ],
+    hashtags: ["TeamCompetition", "AbbeyA", "Champions2026", "UnbeatenSeason"],
+    sponsor: "Normandy Bar",
+  },
 ];
 
 export default function NewsPage() {
@@ -47,7 +63,6 @@ function ArticleCard({ article }: { article: typeof articles[0] }) {
   return (
     <details className="group bg-navy-light/50 border border-gold/10 rounded-xl overflow-hidden hover:border-gold/30 transition-colors">
       <summary className="cursor-pointer list-none">
-        {/* Image */}
         <div className="relative w-full aspect-square overflow-hidden bg-navy-dark">
           <Image
             src={article.image}
@@ -56,8 +71,6 @@ function ArticleCard({ article }: { article: typeof articles[0] }) {
             className="object-cover transition-opacity"
           />
         </div>
-
-        {/* Card header */}
         <div className="p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-gray-500">{article.date}</span>
@@ -81,8 +94,6 @@ function ArticleCard({ article }: { article: typeof articles[0] }) {
           </div>
         </div>
       </summary>
-
-      {/* Full article body */}
       <div className="px-5 pb-6 border-t border-gold/10 pt-4">
         <div className="space-y-3">
           {article.body.map((para, i) => (
@@ -91,15 +102,10 @@ function ArticleCard({ article }: { article: typeof articles[0] }) {
             </p>
           ))}
         </div>
-
-        {/* Hashtags */}
         {article.hashtags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-4">
             {article.hashtags.map((tag) => (
-              <span
-                key={tag}
-                className="text-[10px] text-gold/60 bg-gold/5 border border-gold/10 rounded-full px-2 py-0.5"
-              >
+              <span key={tag} className="text-[10px] text-gold/60 bg-gold/5 border border-gold/10 rounded-full px-2 py-0.5">
                 #{tag}
               </span>
             ))}
