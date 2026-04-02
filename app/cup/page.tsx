@@ -57,7 +57,7 @@ function EntryForm() {
         <span className="text-white font-medium">Dumfries Pool League</span>,{" "}
         Sort: <span className="text-white font-medium">80-22-60</span>,{" "}
         Account: <span className="text-white font-medium">25616367</span>{" "}
-        using your name as the reference.
+        with your name and “singles” as the reference please.
       </p>
 
       {status === "success" ? (
