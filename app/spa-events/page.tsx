@@ -85,15 +85,12 @@ async function getSpaCalendar(): Promise<CalEvent[]> {
     const now = new Date();
 
     for (const block of blocks.slice(1)) {
-      const getSummary = block.match(/SUMMARY:(.+)/)?.[1]?.trim() ?? "";
+      const getSummary = (block.split("SUMMARY:")[1] ?? "").split("\n")[0].trim();
       if (!getSummary || shouldSkip(getSummary)) continue;
 
-      const dtStartRaw = block.match(/DTSTART(?:;VALUE=DATE)?(?:;TZID=[^:]+)?:([^
-]+)/)?.[1]?.trim() ?? "";
-      const dtEndRaw = block.match(/DTEND(?:;VALUE=DATE)?(?:;TZID=[^:]+)?:([^
-]+)/)?.[1]?.trim() ?? "";
-      const locationRaw = block.match(/LOCATION:([^
-]+)/)?.[1]?.replace(/\s+/g, " ").trim() ?? "";
+      const dtStartRaw = (block.split("DTSTART").find((s, i) => i > 0) ?? "").split(":").slice(1).join(":").split("\n")[0].trim();
+      const dtEndRaw = (block.split("DTEND").find((s, i) => i > 0) ?? "").split(":").slice(1).join(":").split("\n")[0].trim();
+      const locationRaw = (block.split("LOCATION:")[1] ?? "").split("\n")[0].replace(/\s+/g, " ").trim();
 
       const start = parseIcsDate(dtStartRaw);
       const end = parseIcsDate(dtEndRaw);
