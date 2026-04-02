@@ -113,7 +113,7 @@ export default async function SpaEventsPage() {
         <p className="text-gray-400 text-sm mt-1">
           All upcoming Scottish Pool Association events. Any Dumfries player can enter — check{" "}
           <a href="https://www.facebook.com/ScottishPool" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">
-            scottishpool.org
+            Scottish Pool on Facebook
           </a>{" "}
           for entry details. For Dumfries area entries see{" "}
           <a href="/dumfries-spa" className="text-gold hover:underline">
