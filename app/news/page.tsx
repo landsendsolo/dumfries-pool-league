@@ -1,15 +1,29 @@
 import Image from "next/image";
 
+interface Article {
+  id: string;
+  headline: string;
+  date: string;
+  excerpt: string;
+  imageAspect: "square" | "video";
+  image: string;
+  imageAlt: string;
+  body: string[];
+  hashtags: string[];
+  sponsor: string;
+}
+
 export const metadata = {
   title: "News | Dumfries Pool League",
 };
 
-const articles = [
+const articles: Article[] = [
   {
     id: "mvp-paul-harkness",
     headline: "N’Dulge MVP Award — Paul Harkness Leads the Race",
     date: "30th March 2026",
     excerpt: "This season sees the introduction of a brand new award — the Most Valuable Player (MVP). With 4 rounds remaining, Paul Harkness sits top with an impressive 85% win rate.",
+    imageAspect: "square",
     image: "/images/news/mvp-paul-harkness.jpg",
     imageAlt: "Paul Harkness — MVP leader with 85% win rate, sponsored by N’Dulge",
     body: [
@@ -23,10 +37,28 @@ const articles = [
     sponsor: "N’Dulge",
   },
   {
+    id: "abbey-team-champions",
+    headline: "Abbey A Win Team Competition — Unbeaten Season Continues",
+    date: "28th March 2026",
+    excerpt: "Abbey A are crowned Team Competition Champions 2026, beating Lochside Tavern 4-2 in the Final at the Normandy Bar — and they remain unbeaten all season.",
+    imageAspect: "square",
+    image: "/images/news/abbey-team-champions.png",
+    imageAlt: "Abbey A with the Team Competition trophy at the Normandy Bar",
+    body: [
+      "Team Competition Sponsored by The Normandy Bar.",
+      "Semi Final results: Abbey A 4-1 Abbey B. Lochside Tavern 3-3 Normandy A (Lochside Tavern win on penalties).",
+      "Final: Abbey A 4-2 Lochside Tavern.",
+      "Congratulations to Abbey A on winning the Team Competition and continuing their unbeaten season. A fantastic achievement from a brilliant team.",
+    ],
+    hashtags: ["TeamCompetition", "AbbeyA", "Champions2026", "UnbeatenSeason"],
+    sponsor: "Normandy Bar",
+  },
+  {
     id: "super11s-champions",
     headline: "Team Dumfries — SPA David Duncan Super 11s Premier Division Champions 2026",
     date: "8th March 2026",
     excerpt: "Ladies and gentlemen, your 2026 David Duncan SPA Super 11 Premier Division Champions — Team Dumfries. A huge congratulations to the South of Scotland team who found a new gear on knockout Sunday.",
+    imageAspect: "video",
     image: "/images/news/super11s-champions.jpg",
     imageAlt: "Team Dumfries with the SPA David Duncan Super 11s Premier Division trophy",
     body: [
@@ -39,22 +71,7 @@ const articles = [
     hashtags: ["Super11s", "TeamDumfries", "Champions2026", "DavidDuncanTrophy", "SPA"],
     sponsor: "SPA",
   },
-  {
-    id: "abbey-team-champions",
-    headline: "Abbey A Win Team Competition — Unbeaten Season Continues",
-    date: "28th March 2026",
-    excerpt: "Abbey A are crowned Team Competition Champions 2026, beating Lochside Tavern 4-2 in the Final at the Normandy Bar — and they remain unbeaten all season.",
-    image: "/images/news/abbey-team-champions.png",
-    imageAlt: "Abbey A with the Team Competition trophy at the Normandy Bar",
-    body: [
-      "Team Competition Sponsored by The Normandy Bar.",
-      "Semi Final results: Abbey A 4-1 Abbey B. Lochside Tavern 3-3 Normandy A (Lochside Tavern win on penalties).",
-      "Final: Abbey A 4-2 Lochside Tavern.",
-      "Congratulations to Abbey A on winning the Team Competition and continuing their unbeaten season. A fantastic achievement from a brilliant team.",
-    ],
-    hashtags: ["TeamCompetition", "AbbeyA", "Champions2026", "UnbeatenSeason"],
-    sponsor: "Normandy Bar",
-  },
+
 ];
 
 export default function NewsPage() {
@@ -76,11 +93,11 @@ export default function NewsPage() {
   );
 }
 
-function ArticleCard({ article }: { article: typeof articles[0] }) {
+function ArticleCard({ article }: { article: Article }) {
   return (
     <details className="group bg-navy-light/50 border border-gold/10 rounded-xl overflow-hidden hover:border-gold/30 transition-colors">
       <summary className="cursor-pointer list-none">
-        <div className="relative w-full aspect-square overflow-hidden bg-navy-dark">
+        <div className={`relative w-full ${article.imageAspect === "video" ? "aspect-video" : "aspect-square"} overflow-hidden bg-navy-dark`}>
           <Image
             src={article.image}
             alt={article.imageAlt}
