@@ -41,6 +41,7 @@ const navItems: NavItem[] = [
       { href: "/documents", label: "Documents" },
     ],
   },
+  { type: "link", href: "/news", label: "News" },
   { type: "link", href: "/sponsors", label: "Sponsors" },
 ];
 
