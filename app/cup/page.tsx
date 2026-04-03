@@ -52,6 +52,9 @@ function EntryForm() {
   return (
     <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-5 sm:p-6 mt-6">
       <h3 className="text-gold font-bold text-sm uppercase tracking-wider mb-1">Enter the Competition</h3>
+      <div className="bg-navy-dark/50 border border-gold/10 rounded-lg px-4 py-3 mb-4 text-xs text-gray-400">
+        <span className="text-gold font-semibold">Already entered?</span> If you have already paid your entry fee and informed Donald, your entry has been accepted — no need to submit this form.
+      </div>
       <p className="text-gray-400 text-xs mb-4">
         Complete the form below then pay your £5 entry fee by bank transfer to{" "}
         <span className="text-white font-medium">Dumfries Pool League</span>,{" "}
