@@ -33,6 +33,7 @@ const navItems: NavItem[] = [
       { href: "/cup", label: "League Competitions" },
       { href: "/spa-events", label: "SPA Events" },
       { href: "/dumfries-spa", label: "Dumfries SPA Entries" },
+      { href: "/honours", label: "Honours" },
     ],
   },
   {
