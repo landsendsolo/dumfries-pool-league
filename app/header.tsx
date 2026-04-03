@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
       { href: "/fixtures", label: "Fixtures" },
       { href: "/results", label: "Results" },
       { href: "/venues", label: "Venues" },
+      { href: "/honours", label: "Honours" },
     ],
   },
   { type: "link", href: "/players", label: "Players" },
@@ -33,7 +34,6 @@ const navItems: NavItem[] = [
       { href: "/cup", label: "League Competitions" },
       { href: "/spa-events", label: "SPA Events" },
       { href: "/dumfries-spa", label: "Dumfries SPA Entries" },
-      { href: "/honours", label: "Honours" },
     ],
   },
   {
