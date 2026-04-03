@@ -21,8 +21,29 @@ export const metadata: Metadata = {
   description:
     "Official website of the Dumfries Pool League — fixtures, results, league table, and player stats.",
   icons: {
-    icon: "/favicon.svg",
-    apple: "/apple-touch-icon.png",
+    icon: "/dpl-emblem.jpg",
+    apple: "/dpl-emblem.jpg",
+  },
+  openGraph: {
+    title: "Dumfries Pool League",
+    description: "Official website of the Dumfries Pool League — fixtures, results, league table, and player stats.",
+    url: "https://dumfriespoolleague.co.uk",
+    siteName: "Dumfries Pool League",
+    images: [
+      {
+        url: "https://dumfriespoolleague.co.uk/dpl-emblem.jpg",
+        width: 1080,
+        height: 1080,
+        alt: "Dumfries Pool League",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Dumfries Pool League",
+    description: "Official website of the Dumfries Pool League — fixtures, results, league table, and player stats.",
+    images: ["https://dumfriespoolleague.co.uk/dpl-emblem.jpg"],
   },
 };
 
