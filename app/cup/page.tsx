@@ -243,7 +243,7 @@ export default function LeagueCompetitionsPage() {
             <p className="text-gray-400 text-xs mt-1">Night 2 — Friday</p>
           </div>
           <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 text-center">
-            <p className="text-gold font-bold text-lg">6:00pm</p>
+            <p className="text-gold font-bold text-lg">6:30pm</p>
             <p className="text-gray-400 text-xs mt-1">Start — Both Nights</p>
           </div>
           <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 text-center">
