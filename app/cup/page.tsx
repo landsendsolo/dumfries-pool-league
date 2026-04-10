@@ -299,3 +299,67 @@ export default function LeagueCompetitionsPage() {
         <SinglesDrawView />
       </div>
       <EntryForm />
+      {/* ── TEAM COMPETITION — COMPLETED ── */}
+      <details className="group mb-8">
+        <summary className="bg-navy-light/50 border border-gold/20 rounded-xl px-5 py-4 cursor-pointer list-none flex items-center justify-between hover:border-gold/40 transition-colors">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-bold text-gold uppercase tracking-wider">
+              Team Competition 2025/26
+            </span>
+            <span className="text-[10px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 rounded-full px-2 py-0.5 uppercase tracking-wider">
+              Completed
+            </span>
+          </div>
+          <svg className="w-4 h-4 text-gold transition-transform group-open:rotate-180 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+
+        <div className="mt-2 space-y-4">
+          <div className="bg-gold/10 border-2 border-gold/40 rounded-xl p-6 text-center">
+            <span className="text-xs font-bold text-gold uppercase tracking-widest block mb-2">Champions 2026</span>
+            <p className="text-white font-bold text-2xl sm:text-3xl">🏆 {CHAMPION}</p>
+            <p className="text-gray-400 text-sm mt-1">beat {SF2_WINNER} {FINAL_SCORE} in the Final</p>
+            <p className="text-gray-500 text-xs mt-1">Normandy Bar — 27th March 2026</p>
+          </div>
+
+          <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-5 sm:p-6 text-center">
+            <span className="text-xs font-bold text-gold uppercase tracking-widest block mb-4">The Final</span>
+            <div className="flex items-center justify-center gap-4 sm:gap-6">
+              <span className={`text-lg sm:text-xl font-bold ${CHAMPION === SF1_WINNER ? "text-gold" : "text-gray-500"}`}>{SF1_WINNER}</span>
+              <span className="text-gold font-bold text-lg sm:text-xl bg-navy/60 rounded px-3 py-1">{FINAL_SCORE}</span>
+              <span className={`text-lg sm:text-xl font-bold ${CHAMPION === SF2_WINNER ? "text-gold" : "text-gray-500"}`}>{SF2_WINNER}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {SEMI_FINALS.map((sf) => {
+              const winner = sf.homeScore > sf.awayScore ? sf.home : sf.away;
+              return (
+                <div key={sf.label} className="bg-navy-light/50 border border-gold/10 rounded-xl p-4 sm:p-5">
+                  <span className="text-xs font-bold text-gold uppercase tracking-wider block mb-3">{sf.label}</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className={`text-base font-bold ${winner === sf.home ? "text-gold" : "text-gray-500"}`}>{sf.home}</span>
+                      <span className={`text-lg font-bold tabular-nums ${winner === sf.home ? "text-gold" : "text-gray-500"}`}>{sf.homeScore}</span>
+                    </div>
+                    <div className="border-t border-gold/10" />
+                    <div className="flex items-center justify-between">
+                      <span className={`text-base font-bold ${winner === sf.away ? "text-gold" : "text-gray-500"}`}>{sf.away}</span>
+                      <span className={`text-lg font-bold tabular-nums ${winner === sf.away ? "text-gold" : "text-gray-500"}`}>{sf.awayScore}</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-2 border-t border-gold/10 flex justify-between text-xs text-gray-500">
+                    <span>{sf.venue}</span>
+                    <span>{sf.time}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </details>
+
+    </div>
+  );
+}
