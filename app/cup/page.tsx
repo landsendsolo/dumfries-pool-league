@@ -288,7 +288,123 @@ export default function LeagueCompetitionsPage() {
           </div>
         </div>
 
-        <EntryForm />
+  
+      {/* Singles Draw */}
+      <div className="mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-px flex-1 bg-gold/20" />
+          <h2 className="text-gold font-semibold text-xs uppercase tracking-widest whitespace-nowrap">The Draw</h2>
+          <div className="h-px flex-1 bg-gold/20" />
+        </div>
+
+        {/* Round 1 top half */}
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px flex-1 bg-gold/10" />
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Round 1 — Top Half · 17th April</p>
+          <div className="h-px flex-1 bg-gold/10" />
+        </div>
+        <p className="text-xs text-gray-600 mb-3">Play-off matches — winners progress to Round 2</p>
+        <div className="space-y-1.5 mb-6">
+          {([
+            [1, "S. McLeod", "S. Couper"],
+            [2, "S. Rutherford", "G. Hunter"],
+          ] as [number, string, string][]).map(([n, h, a]) => (
+            <div key={n} className="flex items-center bg-navy-light/40 border border-gold/10 rounded-lg px-4 py-2.5">
+              <span className="text-gray-600 text-xs w-6 shrink-0">{n}</span>
+              <span className="text-white text-sm flex-1">{h}</span>
+              <span className="text-gold/40 text-xs font-bold px-3">vs</span>
+              <span className="text-white text-sm flex-1 text-right">{a}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Round 1 bottom half */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="h-px flex-1 bg-gold/10" />
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Round 1 — Bottom Half · 17th April</p>
+          <div className="h-px flex-1 bg-gold/10" />
+        </div>
+        <div className="space-y-1.5 mb-6">
+          {([
+            [3, "D. Cruickshank", "D. Young"],
+            [4, "L. Donaldson", "C. Silver"],
+            [5, "K. Kirkpatrick", "J. Stewart"],
+            [6, "A. Moffat", "A. Bell"],
+            [7, "D. Cameron", "C. Riddock"],
+            [8, "K. Galligan", "CJ Clapperton"],
+            [9, "L. Kerr", "P. Hamilton"],
+            [10, "A. Lammie Snr", "J. Kelly"],
+            [11, "J. Deelen", "O. Brown"],
+            [12, "J. Robertson", "M. Lockhart"],
+            [13, "R. Kelly", "C. Robb"],
+            [14, "D. Thom", "D. Dalgleish"],
+            [15, "R. Turley", "P. Coulter"],
+            [16, "S. Griggs", "D. Livingstone"],
+            [17, "M. Donnan", "D. Wylie"],
+            [18, "S. Kirkpatrick", "P. Prange"],
+          ] as [number, string, string][]).map(([n, h, a]) => (
+            <div key={n} className="flex items-center bg-navy-light/40 border border-gold/10 rounded-lg px-4 py-2.5">
+              <span className="text-gray-600 text-xs w-6 shrink-0">{n}</span>
+              <span className="text-white text-sm flex-1">{h}</span>
+              <span className="text-gold/40 text-xs font-bold px-3">vs</span>
+              <span className="text-white text-sm flex-1 text-right">{a}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Round 2 */}
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px flex-1 bg-gold/10" />
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Round 2 — Byes Enter · 17th April</p>
+          <div className="h-px flex-1 bg-gold/10" />
+        </div>
+        <p className="text-xs text-gray-600 mb-3">Bye players enter — drawn against Round 1 winners</p>
+        <div className="space-y-1.5 mb-2">
+          {([
+            [19, "J. Howie", "R.A. Cooper"],
+            [20, "G. Campbell", "J. McEwan"],
+            [21, "R. Hutchison", "A. Lammie Jnr"],
+            [22, "C. Jackson", "S. Drysdale"],
+            [23, "S. Trainor", "L. McPherson"],
+            [24, "N. Maloney", "O. Bruce"],
+            [25, "A. Parker", "P. Scott"],
+            [26, "R1 winner", "R1 winner"],
+          ] as [number, string, string][]).map(([n, h, a]) => (
+            <div key={n} className={`flex items-center border rounded-lg px-4 py-2.5 ${n === 26 ? "bg-navy-light/20 border-gold/5" : "bg-navy-light/40 border-gold/10"}`}>
+              <span className="text-gray-600 text-xs w-6 shrink-0">{n}</span>
+              <span className={`text-sm flex-1 ${n === 26 ? "text-gray-500 italic" : "text-white"}`}>{h}</span>
+              <span className="text-gold/40 text-xs font-bold px-3">vs</span>
+              <span className={`text-sm flex-1 text-right ${n === 26 ? "text-gray-500 italic" : "text-white"}`}>{a}</span>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-gray-600 mb-6">+ 8 Round 1 winners from bottom half vs bye players TBD</p>
+
+        {/* QF, SF, Final */}
+        {([
+          { label: "Quarter Finals · 24th April", slots: 4, highlight: false },
+          { label: "Semi Finals · 24th April", slots: 2, highlight: false },
+          { label: "Final · 24th April, Abbey Inn", slots: 1, highlight: true },
+        ] as { label: string; slots: number; highlight: boolean }[]).map((round) => (
+          <div key={round.label} className="mb-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-px flex-1 bg-gold/10" />
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">{round.label}</p>
+              <div className="h-px flex-1 bg-gold/10" />
+            </div>
+            <div className="space-y-1.5">
+              {Array.from({ length: round.slots }).map((_, i) => (
+                <div key={i} className={`flex items-center border rounded-lg px-4 py-2.5 ${round.highlight ? "bg-gold/5 border-gold/30" : "bg-navy-light/20 border-gold/5"}`}>
+                  <span className="text-gray-500 text-sm italic flex-1">TBD</span>
+                  <span className="text-gold/40 text-xs font-bold px-3">vs</span>
+                  <span className="text-gray-500 text-sm italic flex-1 text-right">TBD</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <EntryForm />
       </div>
 
       {/* ── TEAM COMPETITION — COMPLETED ── */}

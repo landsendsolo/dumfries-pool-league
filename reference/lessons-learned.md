@@ -33,3 +33,13 @@
 - Claude Code — executes all commands, reads files, makes changes
 - Always get full file contents with bash cat before writing fix prompts
 - Never write prompts based on guessed file structure
+
+## Live Scores — Match Blacklist
+
+- Blacklist location: `app/api/live/route.ts` — `BLACKLISTED_MATCH_IDS` array at top of file
+- Add a match ID to the array to prevent it showing in the live feed
+- Currently blacklisted: 301883 (ghost/test match — no players), 315619 (completed cup semi-final)
+- 301873 was blacklisted during Team Competition finals (March 2026) then unblacklisted April 2026 — it is a real league match (Lochside Tavern vs Normandy A)
+- LeagueAppLive only adds a match to the live feed once scoring starts — 0-0 matches appear in feed but are valid
+- Both default and competitionid=1397 URLs return identical data — no need to fetch twice
+- Match detail pages always contain a golf handicap table at the top (Geoff Baker, Graham Audis etc) — this is a LeagueApp template, ignore it
