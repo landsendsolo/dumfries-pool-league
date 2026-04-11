@@ -299,7 +299,10 @@ export default function LeagueCompetitionsPage() {
         </div>
         <SinglesDrawView />
       </div>
-      <EntryForm />
+      <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 text-center mb-6">
+        <p className="text-gold font-semibold text-sm">Entries are now closed</p>
+        <p className="text-gray-400 text-xs mt-1">Thank you to everyone who entered. Good luck!</p>
+      </div>
       {/* ── TEAM COMPETITION — COMPLETED ── */}
       <details className="group mb-8">
         <summary className="bg-navy-light/50 border border-gold/20 rounded-xl px-5 py-4 cursor-pointer list-none flex items-center justify-between hover:border-gold/40 transition-colors">
