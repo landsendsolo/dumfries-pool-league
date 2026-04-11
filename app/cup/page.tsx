@@ -1,5 +1,6 @@
 "use client";
 
+import { SinglesDrawView } from "./singles-draw";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
