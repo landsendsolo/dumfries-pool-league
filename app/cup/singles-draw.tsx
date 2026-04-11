@@ -125,8 +125,11 @@ function MatchCard({ match, isFinal }: { match: SinglesMatch; isFinal: boolean }
 
 function RoundColumn({ matches, roundIndex }: { matches: SinglesMatch[]; roundIndex: number }) {
   const round = ROUNDS[roundIndex];
-  const gap = Math.pow(2, roundIndex) * 8 + 8;
-  const paddingTop = roundIndex > 0 ? (Math.pow(2, roundIndex) - 1) * 24 : 0;
+  // Each R1 match occupies SLOT_H px. Later rounds stack in multiples.
+  const SLOT_H = 58; // approx height of one match card + gap
+  const R1_COUNT = 18;
+  const totalH = R1_COUNT * SLOT_H;
+  const slotH = totalH / matches.length;
 
   return (
     <div className="flex-1" style={{ minWidth: "155px" }}>
@@ -134,9 +137,13 @@ function RoundColumn({ matches, roundIndex }: { matches: SinglesMatch[]; roundIn
         <span className="text-[11px] text-gold font-bold uppercase tracking-wider block">{round.name}</span>
         <span className="text-[10px] text-gray-500 block">{round.date}</span>
       </div>
-      <div className="flex flex-col" style={{ gap: `${gap}px`, paddingTop: `${paddingTop}px` }}>
-        {matches.map((match) => (
-          <MatchCard key={match.id} match={match} isFinal={roundIndex === 5} />
+      <div style={{ height: `${totalH}px`, display: "flex", flexDirection: "column" }}>
+        {matches.map((match, i) => (
+          <div key={match.id} style={{ height: `${slotH}px`, display: "flex", alignItems: "center" }}>
+            <div style={{ width: "100%" }}>
+              <MatchCard match={match} isFinal={roundIndex === 5} />
+            </div>
+          </div>
         ))}
       </div>
     </div>
