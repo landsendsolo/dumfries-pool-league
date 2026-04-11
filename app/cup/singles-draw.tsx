@@ -21,43 +21,31 @@ const ROUNDS = [
 ];
 
 const MATCHES: SinglesMatch[] = [
-  // Round 1 — top half (bye matches)
-  { id: "R1-B1", round: 0, position: 1,  player1: "J. Howie",     player2: "R.A. Cooper",    score1: null, score2: null, winner: null },
-  { id: "R1-B2", round: 0, position: 2,  player1: "G. Campbell",  player2: "J. McEwan",      score1: null, score2: null, winner: null },
-  { id: "R1-B3", round: 0, position: 3,  player1: "R. Hutchison", player2: "A. Lammie Jnr",  score1: null, score2: null, winner: null },
-  { id: "R1-B4", round: 0, position: 4,  player1: "C. Jackson",   player2: "S. Drysdale",    score1: null, score2: null, winner: null },
-  { id: "R1-B5", round: 0, position: 5,  player1: "S. Trainor",   player2: "L. McPherson",   score1: null, score2: null, winner: null },
-  { id: "R1-B6", round: 0, position: 6,  player1: "N. Maloney",   player2: "O. Bruce",       score1: null, score2: null, winner: null },
-  { id: "R1-B7", round: 0, position: 7,  player1: "A. Parker",    player2: "P. Scott",       score1: null, score2: null, winner: null },
-
-  // Round 1 — bottom half (play-off matches)
-  { id: "R1-1",  round: 0, position: 8,  player1: "S. McLeod",      player2: "S. Couper",      score1: null, score2: null, winner: null },
-  { id: "R1-2",  round: 0, position: 9,  player1: "S. Rutherford",  player2: "G. Hunter",      score1: null, score2: null, winner: null },
-  { id: "R1-3",  round: 0, position: 10, player1: "D. Cruickshank", player2: "D. Young",       score1: null, score2: null, winner: null },
-  { id: "R1-4",  round: 0, position: 11, player1: "L. Donaldson",   player2: "C. Silver",      score1: null, score2: null, winner: null },
-  { id: "R1-5",  round: 0, position: 12, player1: "K. Kirkpatrick", player2: "J. Stewart",     score1: null, score2: null, winner: null },
-  { id: "R1-6",  round: 0, position: 13, player1: "A. Moffat",      player2: "A. Bell",        score1: null, score2: null, winner: null },
-  { id: "R1-7",  round: 0, position: 14, player1: "D. Cameron",     player2: "C. Riddock",     score1: null, score2: null, winner: null },
-  { id: "R1-8",  round: 0, position: 15, player1: "K. Galligan",    player2: "CJ Clapperton",  score1: null, score2: null, winner: null },
-  { id: "R1-9",  round: 0, position: 16, player1: "L. Kerr",        player2: "P. Hamilton",    score1: null, score2: null, winner: null },
-  { id: "R1-10", round: 0, position: 17, player1: "A. Lammie Snr",  player2: "J. Kelly",       score1: null, score2: null, winner: null },
-  { id: "R1-11", round: 0, position: 18, player1: "J. Deelen",      player2: "O. Brown",       score1: null, score2: null, winner: null },
-  { id: "R1-12", round: 0, position: 19, player1: "J. Robertson",   player2: "M. Lockhart",    score1: null, score2: null, winner: null },
-  { id: "R1-13", round: 0, position: 20, player1: "R. Kelly",       player2: "C. Robb",        score1: null, score2: null, winner: null },
-  { id: "R1-14", round: 0, position: 21, player1: "D. Thom",        player2: "D. Dalgleish",   score1: null, score2: null, winner: null },
-  { id: "R1-15", round: 0, position: 22, player1: "R. Turley",      player2: "P. Coulter",     score1: null, score2: null, winner: null },
-  { id: "R1-16", round: 0, position: 23, player1: "S. Griggs",      player2: "D. Livingstone", score1: null, score2: null, winner: null },
-  { id: "R1-17", round: 0, position: 24, player1: "M. Donnan",      player2: "D. Wylie",       score1: null, score2: null, winner: null },
-  { id: "R1-18", round: 0, position: 25, player1: "S. Kirkpatrick", player2: "P. Prange",      score1: null, score2: null, winner: null },
-
-  // Round 2 — 16 matches
-  { id: "R2-1",  round: 1, position: 1,  player1: null, player2: null, score1: null, score2: null, winner: null },
-  { id: "R2-2",  round: 1, position: 2,  player1: null, player2: null, score1: null, score2: null, winner: null },
-  { id: "R2-3",  round: 1, position: 3,  player1: null, player2: null, score1: null, score2: null, winner: null },
-  { id: "R2-4",  round: 1, position: 4,  player1: null, player2: null, score1: null, score2: null, winner: null },
-  { id: "R2-5",  round: 1, position: 5,  player1: null, player2: null, score1: null, score2: null, winner: null },
-  { id: "R2-6",  round: 1, position: 6,  player1: null, player2: null, score1: null, score2: null, winner: null },
-  { id: "R2-7",  round: 1, position: 7,  player1: null, player2: null, score1: null, score2: null, winner: null },
+  { id: "R1-1",  round: 0, position: 1,  player1: "S. McLeod",      player2: "S. Couper",      score1: null, score2: null, winner: null },
+  { id: "R1-2",  round: 0, position: 2,  player1: "S. Rutherford",  player2: "G. Hunter",      score1: null, score2: null, winner: null },
+  { id: "R1-3",  round: 0, position: 3,  player1: "D. Cruickshank", player2: "D. Young",       score1: null, score2: null, winner: null },
+  { id: "R1-4",  round: 0, position: 4,  player1: "L. Donaldson",   player2: "C. Silver",      score1: null, score2: null, winner: null },
+  { id: "R1-5",  round: 0, position: 5,  player1: "K. Kirkpatrick", player2: "J. Stewart",     score1: null, score2: null, winner: null },
+  { id: "R1-6",  round: 0, position: 6,  player1: "A. Moffat",      player2: "A. Bell",        score1: null, score2: null, winner: null },
+  { id: "R1-7",  round: 0, position: 7,  player1: "D. Cameron",     player2: "C. Riddock",     score1: null, score2: null, winner: null },
+  { id: "R1-8",  round: 0, position: 8,  player1: "K. Galligan",    player2: "CJ Clapperton",  score1: null, score2: null, winner: null },
+  { id: "R1-9",  round: 0, position: 9,  player1: "L. Kerr",        player2: "P. Hamilton",    score1: null, score2: null, winner: null },
+  { id: "R1-10", round: 0, position: 10, player1: "A. Lammie Snr",  player2: "J. Kelly",       score1: null, score2: null, winner: null },
+  { id: "R1-11", round: 0, position: 11, player1: "J. Deelen",      player2: "O. Brown",       score1: null, score2: null, winner: null },
+  { id: "R1-12", round: 0, position: 12, player1: "J. Robertson",   player2: "M. Lockhart",    score1: null, score2: null, winner: null },
+  { id: "R1-13", round: 0, position: 13, player1: "R. Kelly",       player2: "C. Robb",        score1: null, score2: null, winner: null },
+  { id: "R1-14", round: 0, position: 14, player1: "D. Thom",        player2: "D. Dalgleish",   score1: null, score2: null, winner: null },
+  { id: "R1-15", round: 0, position: 15, player1: "R. Turley",      player2: "P. Coulter",     score1: null, score2: null, winner: null },
+  { id: "R1-16", round: 0, position: 16, player1: "S. Griggs",      player2: "D. Livingstone", score1: null, score2: null, winner: null },
+  { id: "R1-17", round: 0, position: 17, player1: "M. Donnan",      player2: "D. Wylie",       score1: null, score2: null, winner: null },
+  { id: "R1-18", round: 0, position: 18, player1: "S. Kirkpatrick", player2: "P. Prange",      score1: null, score2: null, winner: null },
+  { id: "R2-1",  round: 1, position: 1,  player1: "J. Howie",     player2: "R.A. Cooper",   score1: null, score2: null, winner: null },
+  { id: "R2-2",  round: 1, position: 2,  player1: "G. Campbell",  player2: "J. McEwan",     score1: null, score2: null, winner: null },
+  { id: "R2-3",  round: 1, position: 3,  player1: "R. Hutchison", player2: "A. Lammie Jnr", score1: null, score2: null, winner: null },
+  { id: "R2-4",  round: 1, position: 4,  player1: "C. Jackson",   player2: "S. Drysdale",   score1: null, score2: null, winner: null },
+  { id: "R2-5",  round: 1, position: 5,  player1: "S. Trainor",   player2: "L. McPherson",  score1: null, score2: null, winner: null },
+  { id: "R2-6",  round: 1, position: 6,  player1: "N. Maloney",   player2: "O. Bruce",      score1: null, score2: null, winner: null },
+  { id: "R2-7",  round: 1, position: 7,  player1: "A. Parker",    player2: "P. Scott",      score1: null, score2: null, winner: null },
   { id: "R2-8",  round: 1, position: 8,  player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "R2-9",  round: 1, position: 9,  player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "R2-10", round: 1, position: 10, player1: null, player2: null, score1: null, score2: null, winner: null },
@@ -67,8 +55,6 @@ const MATCHES: SinglesMatch[] = [
   { id: "R2-14", round: 1, position: 14, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "R2-15", round: 1, position: 15, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "R2-16", round: 1, position: 16, player1: null, player2: null, score1: null, score2: null, winner: null },
-
-  // Round 3 — 8 matches
   { id: "R3-1", round: 2, position: 1, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "R3-2", round: 2, position: 2, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "R3-3", round: 2, position: 3, player1: null, player2: null, score1: null, score2: null, winner: null },
@@ -77,19 +63,13 @@ const MATCHES: SinglesMatch[] = [
   { id: "R3-6", round: 2, position: 6, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "R3-7", round: 2, position: 7, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "R3-8", round: 2, position: 8, player1: null, player2: null, score1: null, score2: null, winner: null },
-
-  // Quarter Finals
   { id: "QF-1", round: 3, position: 1, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "QF-2", round: 3, position: 2, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "QF-3", round: 3, position: 3, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "QF-4", round: 3, position: 4, player1: null, player2: null, score1: null, score2: null, winner: null },
-
-  // Semi Finals
   { id: "SF-1", round: 4, position: 1, player1: null, player2: null, score1: null, score2: null, winner: null },
   { id: "SF-2", round: 4, position: 2, player1: null, player2: null, score1: null, score2: null, winner: null },
-
-  // Final
-  { id: "F-1", round: 5, position: 1, player1: null, player2: null, score1: null, score2: null, winner: null },
+  { id: "F-1",  round: 5, position: 1, player1: null, player2: null, score1: null, score2: null, winner: null },
 ];
 
 function MatchCard({ match, isFinal }: { match: SinglesMatch; isFinal: boolean }) {
