@@ -287,8 +287,8 @@ export default function LeagueCompetitionsPage() {
             </div>
           </div>
         </div>
+      </div>
 
-  
       {/* Singles Draw */}
       <div className="mb-12">
         <div className="flex items-center gap-3 mb-6">
