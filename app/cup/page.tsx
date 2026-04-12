@@ -1,6 +1,6 @@
 "use client";
 
-import { SinglesDrawView } from "./singles-draw";
+import Link from "next/link";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
@@ -288,21 +288,22 @@ export default function LeagueCompetitionsPage() {
             </div>
           </div>
         </div>
+
+        {/* View Draw link */}
+        <Link
+          href="/cup/singles"
+          className="block bg-navy-light/50 border border-gold/30 rounded-xl p-5 text-center hover:border-gold/50 transition-colors group"
+        >
+          <span className="text-gold font-bold text-sm uppercase tracking-wider group-hover:text-gold/90">
+            Dumfries Singles Pool Event — View Draw
+          </span>
+          <span className="block text-gray-400 text-xs mt-1">Full bracket with all 32 players</span>
+          <svg className="w-5 h-5 text-gold/60 group-hover:text-gold mx-auto mt-2 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
       </div>
 
-      {/* Singles Draw */}
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-px flex-1 bg-gold/20" />
-          <h2 className="text-gold font-semibold text-xs uppercase tracking-widest whitespace-nowrap">The Draw</h2>
-          <div className="h-px flex-1 bg-gold/20" />
-        </div>
-        <SinglesDrawView />
-      </div>
-      <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 text-center mb-6">
-        <p className="text-gold font-semibold text-sm">Entries are now closed</p>
-        <p className="text-gray-400 text-xs mt-1">Thank you to everyone who entered. Good luck!</p>
-      </div>
       {/* ── TEAM COMPETITION — COMPLETED ── */}
       <details className="group mb-8">
         <summary className="bg-navy-light/50 border border-gold/20 rounded-xl px-5 py-4 cursor-pointer list-none flex items-center justify-between hover:border-gold/40 transition-colors">
