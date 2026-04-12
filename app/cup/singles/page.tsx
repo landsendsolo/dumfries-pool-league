@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Dumfries Singles Pool Event — Draw",
-  description: "Full bracket draw for the Dumfries Singles Pool Event 2026",
+  description: "Full draw for the Dumfries Singles Pool Event 2026",
 };
 
 /* ───────────────────────── data ───────────────────────── */
@@ -286,7 +286,7 @@ function tbdMatches(n: number): Match[] {
 
 /* ═══════════════════ page component ═══════════════════ */
 
-export default function SinglesBracketPage() {
+export default function SinglesDrawPage() {
   /* ── X positions ── */
   const leftStartX = 20;
   const L_R1_X = leftStartX;
@@ -341,7 +341,7 @@ export default function SinglesBracketPage() {
         </div>
       </div>
 
-      {/* Bracket */}
+      {/* Draw */}
       <div className="overflow-x-auto pb-8">
         <div className="min-w-max px-4">
           <svg

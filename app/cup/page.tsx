@@ -297,7 +297,7 @@ export default function LeagueCompetitionsPage() {
           <span className="text-gold font-bold text-sm uppercase tracking-wider group-hover:text-gold/90">
             Dumfries Singles Pool Event — View Draw
           </span>
-          <span className="block text-gray-400 text-xs mt-1">Full bracket with all 32 players</span>
+          <span className="block text-gray-400 text-xs mt-1">Full draw with all 32 players</span>
           <svg className="w-5 h-5 text-gold/60 group-hover:text-gold mx-auto mt-2 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
