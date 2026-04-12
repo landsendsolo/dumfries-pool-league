@@ -42,7 +42,7 @@ const L_R2: Match[] = [
   { p1: "S. Trainor", p2: "L. McPherson" },
   { p1: "N. Maloney", p2: "O. Bruce" },
   { p1: "A. Parker", p2: "P. Scott" },
-  { p1: "Winner Slot 15", p2: "Winner Slot 16" },
+  { p1: "TBD", p2: "TBD" },
 ];
 
 // RIGHT half ─ Round 1 (16 real matches)
@@ -73,37 +73,133 @@ const PAIR_H = SLOT_H * 2 + SLOT_GAP;
 const MATCH_GAP = 10;
 const COL_W = 170;
 const COL_GAP = 50;
+const STEP = COL_W + COL_GAP;
 const NAME_PAD_X = 8;
 const FONT = 11;
 const CONN_COLOR = "#D4AF37";
 const CONN_OPACITY = 0.35;
 
-/* ────────── helper: y-center of a match block ───────── */
-function matchCenterY(index: number, count: number, totalH: number): number {
-  const blockH = count * PAIR_H + (count - 1) * MATCH_GAP;
-  const topOffset = (totalH - blockH) / 2;
-  return topOffset + index * (PAIR_H + MATCH_GAP) + PAIR_H / 2;
+/* ── precompute Y center positions (shared by both halves) ── */
+
+const TOP_PAD = 40;
+const R1_SPACING = PAIR_H + MATCH_GAP;
+
+// Round 1: 16 evenly spaced — this is the baseline grid
+const r1Ys: number[] = [];
+for (let i = 0; i < 16; i++) {
+  r1Ys.push(TOP_PAD + i * R1_SPACING + PAIR_H / 2);
 }
 
-/* ─────────── draw one column of matches ─────────────── */
-function renderColumn(
-  matches: Match[],
-  x: number,
-  totalH: number,
-  isBye: boolean,
-  roundLabel: string,
-) {
-  const count = matches.length;
-  const blockH = count * PAIR_H + (count - 1) * MATCH_GAP;
-  const topOffset = (totalH - blockH) / 2;
-  const elements: React.ReactNode[] = [];
+// Round 2: midpoint of each R1 pair
+const r2Ys: number[] = [];
+for (let i = 0; i < 8; i++) {
+  r2Ys.push((r1Ys[i * 2] + r1Ys[i * 2 + 1]) / 2);
+}
 
-  // Round label
-  elements.push(
+// Round 3: midpoint of each R2 pair
+const r3Ys: number[] = [];
+for (let i = 0; i < 4; i++) {
+  r3Ys.push((r2Ys[i * 2] + r2Ys[i * 2 + 1]) / 2);
+}
+
+// Round 4: midpoint of each R3 pair
+const r4Ys: number[] = [];
+for (let i = 0; i < 2; i++) {
+  r4Ys.push((r3Ys[i * 2] + r3Ys[i * 2 + 1]) / 2);
+}
+
+// Final: midpoint of the two R4 matches
+const finalCenterY = (r4Ys[0] + r4Ys[1]) / 2;
+
+const TOTAL_H = TOP_PAD + 15 * R1_SPACING + PAIR_H + 20;
+
+/* ──────── render a single match box at centerY ──────── */
+
+function renderMatch(
+  m: Match,
+  x: number,
+  centerY: number,
+  key: string,
+): React.ReactNode[] {
+  const topY = centerY - PAIR_H / 2;
+  const isTBD = m.p1 === "TBD" && m.p2 === "TBD";
+  const p1Bye = m.p1 === "bye";
+  const els: React.ReactNode[] = [];
+
+  els.push(
+    <rect
+      key={`bg-${key}`}
+      x={x}
+      y={topY}
+      width={COL_W}
+      height={PAIR_H}
+      rx={4}
+      fill={isTBD ? "rgba(15,23,42,0.3)" : "rgba(15,23,42,0.7)"}
+      stroke={isTBD ? "rgba(212,175,55,0.08)" : "rgba(212,175,55,0.2)"}
+      strokeWidth={1}
+    />,
+  );
+
+  els.push(
+    <line
+      key={`div-${key}`}
+      x1={x}
+      x2={x + COL_W}
+      y1={topY + SLOT_H + SLOT_GAP / 2}
+      y2={topY + SLOT_H + SLOT_GAP / 2}
+      stroke="rgba(212,175,55,0.12)"
+      strokeWidth={1}
+    />,
+  );
+
+  const p1Text = p1Bye ? "BYE" : m.p1;
+  const p1Fill = p1Bye
+    ? "rgba(156,163,175,0.3)"
+    : isTBD
+      ? "rgba(156,163,175,0.35)"
+      : "#e2e8f0";
+  els.push(
     <text
-      key={`label-${roundLabel}-${x}`}
+      key={`p1-${key}`}
+      x={x + NAME_PAD_X}
+      y={topY + SLOT_H / 2 + 4}
+      fill={p1Fill}
+      fontSize={FONT}
+      fontStyle={p1Bye ? "italic" : "normal"}
+    >
+      {p1Text}
+    </text>,
+  );
+
+  const p2Fill = isTBD ? "rgba(156,163,175,0.35)" : "#e2e8f0";
+  els.push(
+    <text
+      key={`p2-${key}`}
+      x={x + NAME_PAD_X}
+      y={topY + SLOT_H + SLOT_GAP + SLOT_H / 2 + 4}
+      fill={p2Fill}
+      fontSize={FONT}
+    >
+      {m.p2}
+    </text>,
+  );
+
+  return els;
+}
+
+/* ──── render a round label above the first match ──── */
+
+function renderLabel(
+  label: string,
+  x: number,
+  firstCenterY: number,
+  key: string,
+): React.ReactNode {
+  return (
+    <text
+      key={`label-${key}`}
       x={x + COL_W / 2}
-      y={topOffset - 12}
+      y={firstCenterY - PAIR_H / 2 - 10}
       textAnchor="middle"
       fill="#D4AF37"
       fontSize={9}
@@ -111,141 +207,79 @@ function renderColumn(
       letterSpacing={1.5}
       className="uppercase"
     >
-      {roundLabel}
-    </text>,
+      {label}
+    </text>
   );
-
-  matches.forEach((m, i) => {
-    const my = topOffset + i * (PAIR_H + MATCH_GAP);
-    const isTBD = m.p1 === "TBD" && m.p2 === "TBD";
-    const p1Bye = m.p1 === "bye";
-
-    // Match background
-    elements.push(
-      <rect
-        key={`bg-${roundLabel}-${i}`}
-        x={x}
-        y={my}
-        width={COL_W}
-        height={PAIR_H}
-        rx={4}
-        fill={isTBD ? "rgba(15,23,42,0.3)" : "rgba(15,23,42,0.7)"}
-        stroke={isTBD ? "rgba(212,175,55,0.08)" : "rgba(212,175,55,0.2)"}
-        strokeWidth={1}
-      />,
-    );
-
-    // Divider line
-    elements.push(
-      <line
-        key={`div-${roundLabel}-${i}`}
-        x1={x}
-        x2={x + COL_W}
-        y1={my + SLOT_H + SLOT_GAP / 2}
-        y2={my + SLOT_H + SLOT_GAP / 2}
-        stroke="rgba(212,175,55,0.12)"
-        strokeWidth={1}
-      />,
-    );
-
-    // Player 1
-    const p1Text = p1Bye ? "BYE" : m.p1;
-    const p1Fill = p1Bye ? "rgba(156,163,175,0.3)" : isTBD ? "rgba(156,163,175,0.35)" : "#e2e8f0";
-    elements.push(
-      <text
-        key={`p1-${roundLabel}-${i}`}
-        x={x + NAME_PAD_X}
-        y={my + SLOT_H / 2 + 4}
-        fill={p1Fill}
-        fontSize={FONT}
-        fontStyle={p1Bye ? "italic" : "normal"}
-      >
-        {p1Text}
-      </text>,
-    );
-
-    // Player 2
-    const p2Fill = isTBD ? "rgba(156,163,175,0.35)" : "#e2e8f0";
-    elements.push(
-      <text
-        key={`p2-${roundLabel}-${i}`}
-        x={x + NAME_PAD_X}
-        y={my + SLOT_H + SLOT_GAP + SLOT_H / 2 + 4}
-        fill={p2Fill}
-        fontSize={FONT}
-      >
-        {m.p2}
-      </text>,
-    );
-  });
-
-  return elements;
 }
 
-/* ───────── connector lines between two columns ────────── */
-function renderConnectors(
-  fromCount: number,
-  toCount: number,
+/* ── left-side connectors (exit right edge → enter left edge) ── */
+
+function leftConnectors(
+  fromYs: number[],
+  toYs: number[],
   fromX: number,
   toX: number,
-  totalH: number,
-) {
+  keyPrefix: string,
+): React.ReactNode[] {
   const lines: React.ReactNode[] = [];
-  for (let i = 0; i < toCount; i++) {
-    const srcTop = i * 2;
-    const srcBot = i * 2 + 1;
-    if (srcTop >= fromCount || srcBot >= fromCount) break;
-    const y1 = matchCenterY(srcTop, fromCount, totalH);
-    const y2 = matchCenterY(srcBot, fromCount, totalH);
-    const yMid = (y1 + y2) / 2;
-    const xFrom = fromX + COL_W;
-    const xTo = toX;
-    const xMid = (xFrom + xTo) / 2;
+  const exitX = fromX + COL_W;
+  const entryX = toX;
+  const midX = (exitX + entryX) / 2;
 
-    // Horizontal from top match
+  for (let i = 0; i < toYs.length; i++) {
+    const y1 = fromYs[i * 2];
+    const y2 = fromYs[i * 2 + 1];
+    const yMid = toYs[i];
+
     lines.push(
-      <line key={`ct-${fromX}-${i}-h1`} x1={xFrom} y1={y1} x2={xMid} y2={y1}
+      <line key={`${keyPrefix}-${i}-h1`} x1={exitX} y1={y1} x2={midX} y2={y1}
         stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />,
-    );
-    // Horizontal from bottom match
-    lines.push(
-      <line key={`ct-${fromX}-${i}-h2`} x1={xFrom} y1={y2} x2={xMid} y2={y2}
+      <line key={`${keyPrefix}-${i}-h2`} x1={exitX} y1={y2} x2={midX} y2={y2}
         stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />,
-    );
-    // Vertical joining them
-    lines.push(
-      <line key={`ct-${fromX}-${i}-v`} x1={xMid} y1={y1} x2={xMid} y2={y2}
+      <line key={`${keyPrefix}-${i}-v`} x1={midX} y1={y1} x2={midX} y2={y2}
         stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />,
-    );
-    // Horizontal into next round
-    lines.push(
-      <line key={`ct-${fromX}-${i}-h3`} x1={xMid} y1={yMid} x2={xTo} y2={yMid}
+      <line key={`${keyPrefix}-${i}-h3`} x1={midX} y1={yMid} x2={entryX} y2={yMid}
         stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />,
     );
   }
   return lines;
 }
 
-/* ──────────── build one half (left or right) ──────────── */
-function buildHalf(
-  rounds: { label: string; matches: Match[]; isBye?: boolean }[],
-  startX: number,
-  totalH: number,
-) {
-  const els: React.ReactNode[] = [];
-  let x = startX;
-  rounds.forEach((round, ri) => {
-    els.push(...renderColumn(round.matches, x, totalH, !!round.isBye, round.label));
-    if (ri < rounds.length - 1) {
-      const nextX = x + COL_W + COL_GAP;
-      els.push(...renderConnectors(round.matches.length, rounds[ri + 1].matches.length, x, nextX, totalH));
-    }
-    x += COL_W + COL_GAP;
-  });
-  return els;
+/* ── right-side connectors (exit left edge → enter right edge) ── */
+
+function rightConnectors(
+  fromYs: number[],
+  toYs: number[],
+  fromX: number,
+  toX: number,
+  keyPrefix: string,
+): React.ReactNode[] {
+  const lines: React.ReactNode[] = [];
+  const exitX = fromX;
+  const entryX = toX + COL_W;
+  const midX = (exitX + entryX) / 2;
+
+  for (let i = 0; i < toYs.length; i++) {
+    const y1 = fromYs[i * 2];
+    const y2 = fromYs[i * 2 + 1];
+    const yMid = toYs[i];
+
+    lines.push(
+      <line key={`${keyPrefix}-${i}-h1`} x1={exitX} y1={y1} x2={midX} y2={y1}
+        stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />,
+      <line key={`${keyPrefix}-${i}-h2`} x1={exitX} y1={y2} x2={midX} y2={y2}
+        stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />,
+      <line key={`${keyPrefix}-${i}-v`} x1={midX} y1={y1} x2={midX} y2={y2}
+        stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />,
+      <line key={`${keyPrefix}-${i}-h3`} x1={midX} y1={yMid} x2={entryX} y2={yMid}
+        stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />,
+    );
+  }
+  return lines;
 }
 
-/* ──────────────── TBD match generators ────────────────── */
+/* ──── TBD match generator ──── */
+
 function tbdMatches(n: number): Match[] {
   return Array.from({ length: n }, () => ({ p1: "TBD", p2: "TBD" }));
 }
@@ -253,38 +287,35 @@ function tbdMatches(n: number): Match[] {
 /* ═══════════════════ page component ═══════════════════ */
 
 export default function SinglesBracketPage() {
-  /* Left half rounds */
-  const leftRounds = [
-    { label: "Round 1", matches: L_R1, isBye: true },
-    { label: "Round 2", matches: L_R2 },
-    { label: "Round 3", matches: tbdMatches(4) },
-    { label: "Round 4", matches: tbdMatches(2) },
-  ];
-
-  /* Right half rounds */
-  const rightRounds = [
-    { label: "Round 1", matches: R_R1 },
-    { label: "Round 2", matches: tbdMatches(8) },
-    { label: "Round 3", matches: tbdMatches(4) },
-    { label: "Round 4", matches: tbdMatches(2) },
-  ];
-
-  /* Height: driven by 16-match column (tallest) */
-  const maxMatches = 16;
-  const totalH = maxMatches * PAIR_H + (maxMatches - 1) * MATCH_GAP + 60;
-
-  /* Widths */
-  const halfCols = 4;
-  const halfW = halfCols * COL_W + (halfCols - 1) * COL_GAP;
-  const centerGap = 100;
-  const finalW = 180;
-  const svgW = halfW * 2 + centerGap + finalW + 40;
+  /* ── X positions ── */
   const leftStartX = 20;
-  const rightStartX = leftStartX + halfW + centerGap + finalW;
+  const L_R1_X = leftStartX;
+  const L_R2_X = leftStartX + STEP;
+  const L_R3_X = leftStartX + 2 * STEP;
+  const L_R4_X = leftStartX + 3 * STEP;
 
-  /* Final box position */
-  const finalX = leftStartX + halfW + (centerGap + finalW) / 2 - finalW / 2;
-  const finalY = totalH / 2 - 50;
+  const halfW = 3 * STEP + COL_W;
+  const centerGap = 40;
+  const finalW = 180;
+  const finalGap = 40;
+
+  const finalX = leftStartX + halfW + centerGap;
+  const finalY = finalCenterY - 50;
+
+  /* Right half: R4 closest to center, R1 on the far right */
+  const R_R4_X = finalX + finalW + finalGap;
+  const R_R3_X = R_R4_X + STEP;
+  const R_R2_X = R_R4_X + 2 * STEP;
+  const R_R1_X = R_R4_X + 3 * STEP;
+
+  const svgW = R_R1_X + COL_W + 20;
+
+  /* TBD round data */
+  const L_R3 = tbdMatches(4);
+  const L_R4 = tbdMatches(2);
+  const R_R2 = tbdMatches(8);
+  const R_R3 = tbdMatches(4);
+  const R_R4 = tbdMatches(2);
 
   return (
     <div className="min-h-screen bg-navy">
@@ -315,72 +346,67 @@ export default function SinglesBracketPage() {
         <div className="min-w-max px-4">
           <svg
             width={svgW}
-            height={totalH + 20}
-            viewBox={`0 0 ${svgW} ${totalH + 20}`}
+            height={TOTAL_H}
+            viewBox={`0 0 ${svgW} ${TOTAL_H}`}
             className="mx-auto"
           >
-            {/* Left half */}
-            {buildHalf(leftRounds, leftStartX, totalH)}
+            {/* ── LEFT HALF ── */}
 
-            {/* Right half (rendered right-to-left visually, we reverse column order) */}
-            {(() => {
-              const els: React.ReactNode[] = [];
-              const reversedRounds = [...rightRounds].reverse();
-              let x = rightStartX;
-              reversedRounds.forEach((round, ri) => {
-                els.push(...renderColumn(round.matches, x, totalH, false, round.label));
-                if (ri < reversedRounds.length - 1) {
-                  const nextX = x + COL_W + COL_GAP;
-                  // connectors go from right column into left column (towards center)
-                  els.push(...renderConnectors(
-                    round.matches.length,
-                    reversedRounds[ri + 1].matches.length,
-                    x,
-                    nextX,
-                    totalH,
-                  ));
-                }
-                x += COL_W + COL_GAP;
-              });
-              return els;
-            })()}
+            {renderLabel("Round 1", L_R1_X, r1Ys[0], "L-R1")}
+            {L_R1.map((m, i) => renderMatch(m, L_R1_X, r1Ys[i], `L-R1-${i}`))}
 
-            {/* Connectors from L-R4 into Final */}
+            {leftConnectors(r1Ys, r2Ys, L_R1_X, L_R2_X, "lc-12")}
+
+            {renderLabel("Round 2", L_R2_X, r2Ys[0], "L-R2")}
+            {L_R2.map((m, i) => renderMatch(m, L_R2_X, r2Ys[i], `L-R2-${i}`))}
+
+            {leftConnectors(r2Ys, r3Ys, L_R2_X, L_R3_X, "lc-23")}
+
+            {renderLabel("Round 3", L_R3_X, r3Ys[0], "L-R3")}
+            {L_R3.map((m, i) => renderMatch(m, L_R3_X, r3Ys[i], `L-R3-${i}`))}
+
+            {leftConnectors(r3Ys, r4Ys, L_R3_X, L_R4_X, "lc-34")}
+
+            {renderLabel("Round 4", L_R4_X, r4Ys[0], "L-R4")}
+            {L_R4.map((m, i) => renderMatch(m, L_R4_X, r4Ys[i], `L-R4-${i}`))}
+
+            {/* L-R4 → Final */}
+            {leftConnectors(r4Ys, [finalCenterY], L_R4_X, finalX, "lc-4f")}
+
+            {/* ── RIGHT HALF ── */}
+
+            {renderLabel("Round 1", R_R1_X, r1Ys[0], "R-R1")}
+            {R_R1.map((m, i) => renderMatch(m, R_R1_X, r1Ys[i], `R-R1-${i}`))}
+
+            {rightConnectors(r1Ys, r2Ys, R_R1_X, R_R2_X, "rc-12")}
+
+            {renderLabel("Round 2", R_R2_X, r2Ys[0], "R-R2")}
+            {R_R2.map((m, i) => renderMatch(m, R_R2_X, r2Ys[i], `R-R2-${i}`))}
+
+            {rightConnectors(r2Ys, r3Ys, R_R2_X, R_R3_X, "rc-23")}
+
+            {renderLabel("Round 3", R_R3_X, r3Ys[0], "R-R3")}
+            {R_R3.map((m, i) => renderMatch(m, R_R3_X, r3Ys[i], `R-R3-${i}`))}
+
+            {rightConnectors(r3Ys, r4Ys, R_R3_X, R_R4_X, "rc-34")}
+
+            {renderLabel("Round 4", R_R4_X, r4Ys[0], "R-R4")}
+            {R_R4.map((m, i) => renderMatch(m, R_R4_X, r4Ys[i], `R-R4-${i}`))}
+
+            {/* R-R4 → Final (right-to-left into Final's right edge) */}
             {(() => {
-              const l4X = leftStartX + 3 * (COL_W + COL_GAP);
-              const lY1 = matchCenterY(0, 2, totalH);
-              const lY2 = matchCenterY(1, 2, totalH);
-              const lMidY = (lY1 + lY2) / 2;
+              const exitX = R_R4_X;
+              const entryX = finalX + finalW;
+              const midX = (exitX + entryX) / 2;
               return (
                 <>
-                  <line x1={l4X + COL_W} y1={lY1} x2={l4X + COL_W + 15} y2={lY1}
+                  <line x1={exitX} y1={r4Ys[0]} x2={midX} y2={r4Ys[0]}
                     stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
-                  <line x1={l4X + COL_W} y1={lY2} x2={l4X + COL_W + 15} y2={lY2}
+                  <line x1={exitX} y1={r4Ys[1]} x2={midX} y2={r4Ys[1]}
                     stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
-                  <line x1={l4X + COL_W + 15} y1={lY1} x2={l4X + COL_W + 15} y2={lY2}
+                  <line x1={midX} y1={r4Ys[0]} x2={midX} y2={r4Ys[1]}
                     stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
-                  <line x1={l4X + COL_W + 15} y1={lMidY} x2={finalX} y2={totalH / 2}
-                    stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
-                </>
-              );
-            })()}
-
-            {/* Connectors from R-R4 into Final */}
-            {(() => {
-              // R-R4 is the last reversed column, which is at rightStartX + 3*(COL_W+COL_GAP)
-              const r4X = rightStartX + 3 * (COL_W + COL_GAP);
-              const rY1 = matchCenterY(0, 2, totalH);
-              const rY2 = matchCenterY(1, 2, totalH);
-              const rMidY = (rY1 + rY2) / 2;
-              return (
-                <>
-                  <line x1={r4X + COL_W} y1={rY1} x2={r4X + COL_W + 15} y2={rY1}
-                    stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
-                  <line x1={r4X + COL_W} y1={rY2} x2={r4X + COL_W + 15} y2={rY2}
-                    stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
-                  <line x1={r4X + COL_W + 15} y1={rY1} x2={r4X + COL_W + 15} y2={rY2}
-                    stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
-                  <line x1={r4X + COL_W + 15} y1={rMidY} x2={finalX + finalW} y2={totalH / 2}
+                  <line x1={midX} y1={finalCenterY} x2={entryX} y2={finalCenterY}
                     stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
                 </>
               );
