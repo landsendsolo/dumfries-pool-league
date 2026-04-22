@@ -1,6 +1,5 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { readFile } from "fs/promises";
+import path from "path";
 
 interface SinglesMatch {
   id: string;
@@ -86,17 +85,14 @@ function RoundColumn({ matches, roundIndex, roundInfo }: { matches: SinglesMatch
   );
 }
 
-export function SinglesDrawView() {
-  const [data, setData] = useState<DrawData | null>(null);
-
-  useEffect(() => {
-    fetch("/api/singles")
-      .then(r => r.json())
-      .then(setData)
-      .catch(() => {});
-  }, []);
-
-  if (!data) return <p className="text-gray-500 text-sm text-center py-8">Loading draw...</p>;
+export async function SinglesDrawView() {
+  let data: DrawData;
+  try {
+    const raw = await readFile(path.join(process.cwd(), "data", "singles-draw.json"), "utf-8");
+    data = JSON.parse(raw);
+  } catch {
+    return <p className="text-gray-500 text-sm text-center py-8">Draw data unavailable.</p>;
+  }
 
   const winner = data.matches.find(m => m.round === 5 && m.winner)?.winner;
   const matchesByRound = data.rounds.map((_, i) =>
@@ -108,7 +104,7 @@ export function SinglesDrawView() {
       {winner && (
         <div className="bg-gold/10 border border-gold/30 rounded-xl p-4 sm:p-6 mb-6 text-center">
           <span className="text-xs text-gold font-bold uppercase tracking-wider block mb-2">Champion</span>
-          <p className="text-white font-bold text-xl sm:text-2xl">🏆 {winner}</p>
+          <p className="text-white font-bold text-xl sm:text-2xl">\U0001F3C6 {winner}</p>
         </div>
       )}
       <div className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">

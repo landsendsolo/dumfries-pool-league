@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { saveSinglesResult, resetSinglesResult } from "./actions";
 import { AdminNav } from "@/app/admin/components/admin-nav";
 import { logout } from "@/app/admin/actions";
 
@@ -62,27 +63,23 @@ export default function SinglesAdminPage() {
     const s1 = parseInt(score1);
     const s2 = parseInt(score2);
     const winner = !isNaN(s1) && !isNaN(s2)
-      ? s1 > s2 ? (player1 || selectedMatch.player1)
-      : (player2 || selectedMatch.player2)
+      ? s1 > s2
+        ? (player1 || selectedMatch.player1)
+        : (player2 || selectedMatch.player2)
       : null;
 
-    const res = await fetch("/api/singles", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        matchId: selectedMatch.id,
-        player1: player1 || selectedMatch.player1,
-        player2: player2 || selectedMatch.player2,
-        score1: isNaN(s1) ? null : s1,
-        score2: isNaN(s2) ? null : s2,
+    try {
+      await saveSinglesResult(
+        selectedMatch.id,
+        player1 || selectedMatch.player1,
+        player2 || selectedMatch.player2,
+        isNaN(s1) ? null : s1,
+        isNaN(s2) ? null : s2,
         winner,
-      }),
-    });
-
-    if (res.ok) {
+      );
       setMessage({ type: "success", text: "Result saved" });
       fetchData();
-    } else {
+    } catch {
       setMessage({ type: "error", text: "Failed to save" });
     }
     setSaving(false);
@@ -91,15 +88,13 @@ export default function SinglesAdminPage() {
   async function handleReset() {
     if (!selectedMatch) return;
     setSaving(true);
-    const res = await fetch("/api/singles", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ matchId: selectedMatch.id }),
-    });
-    if (res.ok) {
+    try {
+      await resetSinglesResult(selectedMatch.id);
       setMessage({ type: "success", text: "Result cleared" });
       setScore1(""); setScore2("");
       fetchData();
+    } catch {
+      setMessage({ type: "error", text: "Failed to reset" });
     }
     setSaving(false);
   }
