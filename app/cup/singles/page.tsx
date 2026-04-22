@@ -374,6 +374,15 @@ export default function SinglesDrawPage() {
     };
   }
 
+  /* ── helper: propagate feeder winners into TBD slots ── */
+  function withFeeders(m: Match, feeder1Id: string, feeder2Id: string): Match {
+    return {
+      ...m,
+      p1: m.p1 === "TBD" ? (md[feeder1Id]?.winner ?? "TBD") : m.p1,
+      p2: m.p2 === "TBD" ? (md[feeder2Id]?.winner ?? "TBD") : m.p2,
+    };
+  }
+
   /* ── enriched match arrays ── */
   const eL_R1 = L_R1.map((m, i) => {
     if (i === 14) return enrich(m, "R1-1");
@@ -381,13 +390,19 @@ export default function SinglesDrawPage() {
     return m;
   });
   const eL_R2 = L_R2.map((m, i) => enrich(m, `R2-${i + 1}`));
-  const eL_R3 = Array.from({ length: 4 }, (_, i) => enrich(TBD, `R3-${i + 1}`));
-  const eL_R4 = Array.from({ length: 2 }, (_, i) => enrich(TBD, `QF-${i + 1}`));
+  eL_R2[7] = withFeeders(eL_R2[7], "R1-1", "R1-2");
+  const eL_R3 = Array.from({ length: 4 }, (_, i) =>
+    withFeeders(enrich(TBD, `R3-${i + 1}`), `R2-${i * 2 + 1}`, `R2-${i * 2 + 2}`));
+  const eL_R4 = Array.from({ length: 2 }, (_, i) =>
+    withFeeders(enrich(TBD, `QF-${i + 1}`), `R3-${i * 2 + 1}`, `R3-${i * 2 + 2}`));
   const eR_R1 = R_R1.map((m, i) => enrich(m, `R1-${i + 3}`));
-  const eR_R2 = Array.from({ length: 8 }, (_, i) => enrich(TBD, `R2-${i + 9}`));
-  const eR_R3 = Array.from({ length: 4 }, (_, i) => enrich(TBD, `R3-${i + 5}`));
-  const eR_R4 = Array.from({ length: 2 }, (_, i) => enrich(TBD, `QF-${i + 3}`));
-  const eFinal = enrich(TBD, "F-1");
+  const eR_R2 = Array.from({ length: 8 }, (_, i) =>
+    withFeeders(enrich(TBD, `R2-${i + 9}`), `R1-${i * 2 + 3}`, `R1-${i * 2 + 4}`));
+  const eR_R3 = Array.from({ length: 4 }, (_, i) =>
+    withFeeders(enrich(TBD, `R3-${i + 5}`), `R2-${i * 2 + 9}`, `R2-${i * 2 + 10}`));
+  const eR_R4 = Array.from({ length: 2 }, (_, i) =>
+    withFeeders(enrich(TBD, `QF-${i + 3}`), `R3-${i * 2 + 5}`, `R3-${i * 2 + 6}`));
+  const eFinal = withFeeders(enrich(TBD, "F-1"), "SF-1", "SF-2");
 
   /* ── X positions ── */
   const leftStartX = 20;
