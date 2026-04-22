@@ -161,7 +161,6 @@ export function IMDrawView({ data }: { data: IMDrawData }) {
               key={roundIndex}
               roundInfo={rounds[roundIndex]}
               matches={roundMatches}
-              roundIndex={roundIndex}
               isFinal={roundIndex === 4}
               round0Count={matchesByRound[0]?.length ?? 1}
             />
