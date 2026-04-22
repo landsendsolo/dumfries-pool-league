@@ -5,7 +5,7 @@
       "name": "IM Event 1",
       "fullName": "Mick McGoldrick Individual Membership - Area Draw 1",
       "type": "im",
-      "status": "active",
+      "status": "completed",
       "format": "First to 7 frames",
       "qualifiers": 2,
       "finals": "25th & 26th April 2026",
@@ -18,13 +18,13 @@
       "name": "IM Event 2",
       "fullName": "Individual Membership - Area Draw 2",
       "type": "im",
-      "status": "upcoming",
+      "status": "active",
       "format": "First to 7 frames",
       "qualifiers": 2,
       "finals": "20th & 21st June 2026",
       "finalsVenue": "Lochy's, Barrhead",
       "hasSpreadsheet": false,
-      "drawAvailable": false
+      "drawAvailable": true
     },
     {
       "id": "im-3",
