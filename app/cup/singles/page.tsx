@@ -1,17 +1,35 @@
-import type { Metadata } from "next";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Dumfries Singles Pool Event — Draw",
-  description: "Full draw for the Dumfries Singles Pool Event 2026",
-};
-
-/* ───────────────────────── data ───────────────────────── */
+/* ───────────────────────── types ───────────────────────── */
 
 interface Match {
   p1: string;
   p2: string;
+  score1?: number | null;
+  score2?: number | null;
+  winner?: string | null;
 }
+
+interface ApiMatch {
+  id: string;
+  round: number;
+  position: number;
+  player1: string | null;
+  player2: string | null;
+  score1: number | null;
+  score2: number | null;
+  winner: string | null;
+}
+
+interface DrawData {
+  rounds: { name: string; date: string }[];
+  matches: ApiMatch[];
+}
+
+/* ───────────────────────── data ───────────────────────── */
 
 // LEFT half ─ Round 1 (16 slots: 14 byes + 2 real matches)
 const L_R1: Match[] = [
@@ -36,7 +54,7 @@ const L_R1: Match[] = [
 // LEFT half ─ Round 2 (8 matches)
 const L_R2: Match[] = [
   { p1: "J. Howie", p2: "R.A. Cooper" },
-  { p1: "G. Campbell", p2: "J. McEwen" },
+  { p1: "G. Campbell", p2: "J. McEwan" },
   { p1: "R. Hutchison", p2: "A. Lammie Jnr" },
   { p1: "C. Jackson", p2: "S. Drysdale" },
   { p1: "S. Trainor", p2: "L. McPherson" },
@@ -51,11 +69,11 @@ const R_R1: Match[] = [
   { p1: "L. Donaldson", p2: "C. Silver" },
   { p1: "K. Kirkpatrick", p2: "J. Stewart" },
   { p1: "A. Moffat", p2: "A. Bell" },
-  { p1: "D. Cameron", p2: "C. Riddick" },
-  { p1: "K. Galligan", p2: "C.J. Clapperton" },
+  { p1: "D. Cameron", p2: "C. Riddock" },
+  { p1: "K. Galligan", p2: "CJ Clapperton" },
   { p1: "L. Kerr", p2: "P. Hamilton" },
   { p1: "A. Lammie Snr", p2: "J. Kelly" },
-  { p1: "J. Devlin", p2: "O. Brown" },
+  { p1: "J. Deelen", p2: "O. Brown" },
   { p1: "J. Robertson", p2: "M. Lockhart" },
   { p1: "R. Kelly", p2: "C. Robb" },
   { p1: "D. Thom", p2: "D. Dalgleish" },
@@ -64,6 +82,8 @@ const R_R1: Match[] = [
   { p1: "M. Donnan", p2: "D. Wylie" },
   { p1: "S. Kirkpatrick", p2: "P. Prange" },
 ];
+
+const TBD: Match = { p1: "TBD", p2: "TBD" };
 
 /* ───────────────────── layout constants ───────────────── */
 
@@ -124,6 +144,9 @@ function renderMatch(
   const topY = centerY - PAIR_H / 2;
   const isTBD = m.p1 === "TBD" && m.p2 === "TBD";
   const p1Bye = m.p1 === "bye";
+  const hasResult = m.winner != null;
+  const p1Won = hasResult && m.winner === m.p1;
+  const p2Won = hasResult && m.winner === m.p2;
   const els: React.ReactNode[] = [];
 
   els.push(
@@ -135,7 +158,7 @@ function renderMatch(
       height={PAIR_H}
       rx={4}
       fill={isTBD ? "rgba(15,23,42,0.3)" : "rgba(15,23,42,0.7)"}
-      stroke={isTBD ? "rgba(212,175,55,0.08)" : "rgba(212,175,55,0.2)"}
+      stroke={hasResult ? "rgba(212,175,55,0.4)" : isTBD ? "rgba(212,175,55,0.08)" : "rgba(212,175,55,0.2)"}
       strokeWidth={1}
     />,
   );
@@ -155,9 +178,11 @@ function renderMatch(
   const p1Text = p1Bye ? "BYE" : m.p1;
   const p1Fill = p1Bye
     ? "rgba(156,163,175,0.3)"
-    : isTBD
-      ? "rgba(156,163,175,0.35)"
-      : "#e2e8f0";
+    : p1Won
+      ? "#c9a84c"
+      : isTBD
+        ? "rgba(156,163,175,0.35)"
+        : "#e2e8f0";
   els.push(
     <text
       key={`p1-${key}`}
@@ -165,13 +190,18 @@ function renderMatch(
       y={topY + SLOT_H / 2 + 4}
       fill={p1Fill}
       fontSize={FONT}
+      fontWeight={p1Won ? 700 : 400}
       fontStyle={p1Bye ? "italic" : "normal"}
     >
       {p1Text}
     </text>,
   );
 
-  const p2Fill = isTBD ? "rgba(156,163,175,0.35)" : "#e2e8f0";
+  const p2Fill = p2Won
+    ? "#c9a84c"
+    : isTBD
+      ? "rgba(156,163,175,0.35)"
+      : "#e2e8f0";
   els.push(
     <text
       key={`p2-${key}`}
@@ -179,10 +209,43 @@ function renderMatch(
       y={topY + SLOT_H + SLOT_GAP + SLOT_H / 2 + 4}
       fill={p2Fill}
       fontSize={FONT}
+      fontWeight={p2Won ? 700 : 400}
     >
       {m.p2}
     </text>,
   );
+
+  /* scores — right-aligned */
+  if (hasResult && m.score1 != null) {
+    els.push(
+      <text
+        key={`s1-${key}`}
+        x={x + COL_W - NAME_PAD_X}
+        y={topY + SLOT_H / 2 + 4}
+        textAnchor="end"
+        fill={p1Won ? "#c9a84c" : "rgba(156,163,175,0.5)"}
+        fontSize={FONT}
+        fontWeight={p1Won ? 700 : 400}
+      >
+        {m.score1}
+      </text>,
+    );
+  }
+  if (hasResult && m.score2 != null) {
+    els.push(
+      <text
+        key={`s2-${key}`}
+        x={x + COL_W - NAME_PAD_X}
+        y={topY + SLOT_H + SLOT_GAP + SLOT_H / 2 + 4}
+        textAnchor="end"
+        fill={p2Won ? "#c9a84c" : "rgba(156,163,175,0.5)"}
+        fontSize={FONT}
+        fontWeight={p2Won ? 700 : 400}
+      >
+        {m.score2}
+      </text>,
+    );
+  }
 
   return els;
 }
@@ -278,15 +341,54 @@ function rightConnectors(
   return lines;
 }
 
-/* ──── TBD match generator ──── */
-
-function tbdMatches(n: number): Match[] {
-  return Array.from({ length: n }, () => ({ p1: "TBD", p2: "TBD" }));
-}
-
 /* ═══════════════════ page component ═══════════════════ */
 
 export default function SinglesDrawPage() {
+  const [drawData, setDrawData] = useState<DrawData | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/singles?t=${Date.now()}`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then(setDrawData)
+      .catch(() => {});
+  }, []);
+
+  /* ── build API lookup ── */
+  const md: Record<string, ApiMatch> = {};
+  if (drawData) {
+    for (const m of drawData.matches) {
+      md[m.id] = m;
+    }
+  }
+
+  /* ── helper: overlay API data onto hardcoded match ── */
+  function enrich(base: Match, apiId: string): Match {
+    const api = md[apiId];
+    if (!api) return base;
+    return {
+      p1: api.player1 ?? base.p1,
+      p2: api.player2 ?? base.p2,
+      score1: api.score1,
+      score2: api.score2,
+      winner: api.winner,
+    };
+  }
+
+  /* ── enriched match arrays ── */
+  const eL_R1 = L_R1.map((m, i) => {
+    if (i === 14) return enrich(m, "R1-1");
+    if (i === 15) return enrich(m, "R1-2");
+    return m;
+  });
+  const eL_R2 = L_R2.map((m, i) => enrich(m, `R2-${i + 1}`));
+  const eL_R3 = Array.from({ length: 4 }, (_, i) => enrich(TBD, `R3-${i + 1}`));
+  const eL_R4 = Array.from({ length: 2 }, (_, i) => enrich(TBD, `QF-${i + 1}`));
+  const eR_R1 = R_R1.map((m, i) => enrich(m, `R1-${i + 3}`));
+  const eR_R2 = Array.from({ length: 8 }, (_, i) => enrich(TBD, `R2-${i + 9}`));
+  const eR_R3 = Array.from({ length: 4 }, (_, i) => enrich(TBD, `R3-${i + 5}`));
+  const eR_R4 = Array.from({ length: 2 }, (_, i) => enrich(TBD, `QF-${i + 3}`));
+  const eFinal = enrich(TBD, "F-1");
+
   /* ── X positions ── */
   const leftStartX = 20;
   const L_R1_X = leftStartX;
@@ -310,12 +412,13 @@ export default function SinglesDrawPage() {
 
   const svgW = R_R1_X + COL_W + 20;
 
-  /* TBD round data */
-  const L_R3 = tbdMatches(4);
-  const L_R4 = tbdMatches(2);
-  const R_R2 = tbdMatches(8);
-  const R_R3 = tbdMatches(4);
-  const R_R4 = tbdMatches(2);
+  /* Final box data */
+  const finalP1 = eFinal.p1;
+  const finalP2 = eFinal.p2;
+  const finalWinner = eFinal.winner;
+  const finalHasResult = finalWinner != null;
+  const finalP1Won = finalHasResult && finalWinner === finalP1;
+  const finalP2Won = finalHasResult && finalWinner === finalP2;
 
   return (
     <div className="min-h-screen bg-navy">
@@ -353,22 +456,22 @@ export default function SinglesDrawPage() {
             {/* ── LEFT HALF ── */}
 
             {renderLabel("Round 1", L_R1_X, r1Ys[0], "L-R1")}
-            {L_R1.map((m, i) => renderMatch(m, L_R1_X, r1Ys[i], `L-R1-${i}`))}
+            {eL_R1.map((m, i) => renderMatch(m, L_R1_X, r1Ys[i], `L-R1-${i}`))}
 
             {leftConnectors(r1Ys, r2Ys, L_R1_X, L_R2_X, "lc-12")}
 
             {renderLabel("Round 2", L_R2_X, r2Ys[0], "L-R2")}
-            {L_R2.map((m, i) => renderMatch(m, L_R2_X, r2Ys[i], `L-R2-${i}`))}
+            {eL_R2.map((m, i) => renderMatch(m, L_R2_X, r2Ys[i], `L-R2-${i}`))}
 
             {leftConnectors(r2Ys, r3Ys, L_R2_X, L_R3_X, "lc-23")}
 
             {renderLabel("Round 3", L_R3_X, r3Ys[0], "L-R3")}
-            {L_R3.map((m, i) => renderMatch(m, L_R3_X, r3Ys[i], `L-R3-${i}`))}
+            {eL_R3.map((m, i) => renderMatch(m, L_R3_X, r3Ys[i], `L-R3-${i}`))}
 
             {leftConnectors(r3Ys, r4Ys, L_R3_X, L_R4_X, "lc-34")}
 
             {renderLabel("Round 4", L_R4_X, r4Ys[0], "L-R4")}
-            {L_R4.map((m, i) => renderMatch(m, L_R4_X, r4Ys[i], `L-R4-${i}`))}
+            {eL_R4.map((m, i) => renderMatch(m, L_R4_X, r4Ys[i], `L-R4-${i}`))}
 
             {/* L-R4 → Final */}
             {leftConnectors(r4Ys, [finalCenterY], L_R4_X, finalX, "lc-4f")}
@@ -376,22 +479,22 @@ export default function SinglesDrawPage() {
             {/* ── RIGHT HALF ── */}
 
             {renderLabel("Round 1", R_R1_X, r1Ys[0], "R-R1")}
-            {R_R1.map((m, i) => renderMatch(m, R_R1_X, r1Ys[i], `R-R1-${i}`))}
+            {eR_R1.map((m, i) => renderMatch(m, R_R1_X, r1Ys[i], `R-R1-${i}`))}
 
             {rightConnectors(r1Ys, r2Ys, R_R1_X, R_R2_X, "rc-12")}
 
             {renderLabel("Round 2", R_R2_X, r2Ys[0], "R-R2")}
-            {R_R2.map((m, i) => renderMatch(m, R_R2_X, r2Ys[i], `R-R2-${i}`))}
+            {eR_R2.map((m, i) => renderMatch(m, R_R2_X, r2Ys[i], `R-R2-${i}`))}
 
             {rightConnectors(r2Ys, r3Ys, R_R2_X, R_R3_X, "rc-23")}
 
             {renderLabel("Round 3", R_R3_X, r3Ys[0], "R-R3")}
-            {R_R3.map((m, i) => renderMatch(m, R_R3_X, r3Ys[i], `R-R3-${i}`))}
+            {eR_R3.map((m, i) => renderMatch(m, R_R3_X, r3Ys[i], `R-R3-${i}`))}
 
             {rightConnectors(r3Ys, r4Ys, R_R3_X, R_R4_X, "rc-34")}
 
             {renderLabel("Round 4", R_R4_X, r4Ys[0], "R-R4")}
-            {R_R4.map((m, i) => renderMatch(m, R_R4_X, r4Ys[i], `R-R4-${i}`))}
+            {eR_R4.map((m, i) => renderMatch(m, R_R4_X, r4Ys[i], `R-R4-${i}`))}
 
             {/* R-R4 → Final (right-to-left into Final's right edge) */}
             {(() => {
@@ -447,10 +550,11 @@ export default function SinglesDrawPage() {
               x={finalX + finalW / 2}
               y={finalY + 48}
               textAnchor="middle"
-              fill="rgba(156,163,175,0.4)"
+              fill={finalP1Won ? "#c9a84c" : "rgba(156,163,175,0.4)"}
               fontSize={FONT}
+              fontWeight={finalP1Won ? 700 : 400}
             >
-              TBD
+              {finalP1}
             </text>
             <text
               x={finalX + finalW / 2}
@@ -465,10 +569,11 @@ export default function SinglesDrawPage() {
               x={finalX + finalW / 2}
               y={finalY + 82}
               textAnchor="middle"
-              fill="rgba(156,163,175,0.4)"
+              fill={finalP2Won ? "#c9a84c" : "rgba(156,163,175,0.4)"}
               fontSize={FONT}
+              fontWeight={finalP2Won ? 700 : 400}
             >
-              TBD
+              {finalP2}
             </text>
 
             {/* Champion label */}
@@ -482,7 +587,7 @@ export default function SinglesDrawPage() {
               letterSpacing={1}
               className="uppercase"
             >
-              Champion
+              {finalWinner ? `Champion: ${finalWinner}` : "Champion"}
             </text>
           </svg>
         </div>
