@@ -73,7 +73,7 @@ const R_R1: Match[] = [
   { p1: "K. Galligan", p2: "CJ Clapperton" },
   { p1: "L. Kerr", p2: "P. Hamilton" },
   { p1: "A. Lammie Snr", p2: "J. Kelly" },
-  { p1: "J. Deelen", p2: "O. Brown" },
+  { p1: "J. Devlin", p2: "O. Brown" },
   { p1: "J. Robertson", p2: "M. Lockhart" },
   { p1: "R. Kelly", p2: "C. Robb" },
   { p1: "D. Thom", p2: "D. Dalgleish" },
