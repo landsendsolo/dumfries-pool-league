@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
+import { SinglesDrawView } from "./singles-draw-client";
 
 const FORMSPREE_URL = "https://formspree.io/f/xnjoblqb";
 
