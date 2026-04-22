@@ -28,6 +28,51 @@ interface DrawData {
 
 const ROUND_NAMES = ["Round 1", "Round 2", "Round 3", "Quarter Finals", "Semi Finals", "Final"];
 
+/* ── feeder map: matchId → [feeder1Id, feeder2Id] ── */
+const FEEDERS: Record<string, [string, string]> = {
+  "R2-8":  ["R1-1",  "R1-2"],
+  "R2-9":  ["R1-3",  "R1-4"],
+  "R2-10": ["R1-5",  "R1-6"],
+  "R2-11": ["R1-7",  "R1-8"],
+  "R2-12": ["R1-9",  "R1-10"],
+  "R2-13": ["R1-11", "R1-12"],
+  "R2-14": ["R1-13", "R1-14"],
+  "R2-15": ["R1-15", "R1-16"],
+  "R2-16": ["R1-17", "R1-18"],
+  "R3-1":  ["R2-1",  "R2-2"],
+  "R3-2":  ["R2-3",  "R2-4"],
+  "R3-3":  ["R2-5",  "R2-6"],
+  "R3-4":  ["R2-7",  "R2-8"],
+  "R3-5":  ["R2-9",  "R2-10"],
+  "R3-6":  ["R2-11", "R2-12"],
+  "R3-7":  ["R2-13", "R2-14"],
+  "R3-8":  ["R2-15", "R2-16"],
+  "QF-1":  ["R3-1",  "R3-2"],
+  "QF-2":  ["R3-3",  "R3-4"],
+  "QF-3":  ["R3-5",  "R3-6"],
+  "QF-4":  ["R3-7",  "R3-8"],
+  "SF-1":  ["QF-1",  "QF-2"],
+  "SF-2":  ["QF-3",  "QF-4"],
+  "F-1":   ["SF-1",  "SF-2"],
+};
+
+function propagateWinners(data: DrawData): DrawData {
+  const lookup: Record<string, SinglesMatch> = {};
+  for (const m of data.matches) lookup[m.id] = m;
+
+  const updated = data.matches.map(m => {
+    const feeders = FEEDERS[m.id];
+    if (!feeders) return m;
+    const [f1, f2] = feeders;
+    const p1 = m.player1 ?? lookup[f1]?.winner ?? null;
+    const p2 = m.player2 ?? lookup[f2]?.winner ?? null;
+    if (p1 === m.player1 && p2 === m.player2) return m;
+    return { ...m, player1: p1, player2: p2 };
+  });
+
+  return { ...data, matches: updated };
+}
+
 export default function SinglesAdminPage() {
   const [data, setData] = useState<DrawData | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<SinglesMatch | null>(null);
@@ -41,7 +86,10 @@ export default function SinglesAdminPage() {
 
   const fetchData = useCallback(async () => {
     const res = await fetch("/api/singles");
-    if (res.ok) setData(await res.json());
+    if (res.ok) {
+      const raw: DrawData = await res.json();
+      setData(propagateWinners(raw));
+    }
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
