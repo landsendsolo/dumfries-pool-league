@@ -23,7 +23,7 @@ const articles: Article[] = [
     headline: "Dumfries Pool League Under 16 Competition",
     date: "22nd April 2026",
     excerpt: "What a brilliant day of pool! We hosted the Dumfries Pool League Under 16 Competition and it was fantastic to see such a great turnout.",
-    imageAspect: "video",
+    imageAspect: "square",
     image: "/images/news/under16-winners-2026.jpg",
     imageAlt: "Under 16 Competition winners with trophy",
     body: [
