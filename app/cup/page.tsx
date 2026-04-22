@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import type { FormEvent } from "react";
 import { SinglesDrawView } from "./singles-draw-client";
-
-const FORMSPREE_URL = "https://formspree.io/f/xnjoblqb";
-
-type FormStatus = "idle" | "submitting" | "success" | "error";
 
 // ── Team Competition — completed ──────────────────────────────
 const SF1_WINNER: string = "Abbey A";
@@ -19,206 +13,6 @@ const SEMI_FINALS = [
   { label: "Semi Final 1", home: "Abbey A", away: "Abbey B", venue: "Abbey", time: "19:30", homeScore: 4, awayScore: 1 },
   { label: "Semi Final 2", home: "Lochside Tavern", away: "Normandy A", venue: "Normandy Bar", time: "19:30", homeScore: 4, awayScore: 3 },
 ];
-
-function EntryForm() {
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [isDplPlayer, setIsDplPlayer] = useState<string>("");
-  const [wantsToJoin, setWantsToJoin] = useState<string>("");
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setStatus("submitting");
-
-    const form = e.currentTarget;
-    const data = new FormData(form);
-
-    try {
-      const res = await fetch(FORMSPREE_URL, {
-        method: "POST",
-        body: data,
-        headers: { Accept: "application/json" },
-      });
-      if (res.ok) {
-        setStatus("success");
-        form.reset();
-        setIsDplPlayer("");
-        setWantsToJoin("");
-      } else {
-        setStatus("error");
-      }
-    } catch {
-      setStatus("error");
-    }
-  }
-
-  return (
-    <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-5 sm:p-6 mt-6">
-      <h3 className="text-gold font-bold text-sm uppercase tracking-wider mb-1">Enter the Competition</h3>
-      <div className="bg-navy-dark/50 border border-gold/10 rounded-lg px-4 py-3 mb-4 text-xs text-gray-400">
-        <span className="text-gold font-semibold">Already entered?</span> If you have already paid your entry fee and informed Donald, your entry has been accepted — no need to submit this form.
-      </div>
-      <p className="text-gray-400 text-xs mb-4">
-        Complete the form below then pay your £5 entry fee by bank transfer to{" "}
-        <span className="text-white font-medium">Dumfries Pool League</span>,{" "}
-        Sort: <span className="text-white font-medium">80-22-60</span>,{" "}
-        Account: <span className="text-white font-medium">25616367</span>{" "}
-        with your name and “singles” as the reference please.
-      </p>
-
-      {status === "success" ? (
-        <div className="bg-green-900/30 border border-green-500/30 rounded-lg p-4 text-green-400 text-sm">
-          Entry received! Please remember to send your £5 entry fee. We will be in touch with draw details.
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Hidden CC field for Donald */}
-          <input type="hidden" name="_cc" value="mcdougall64@icloud.com" />
-          <input type="hidden" name="_subject" value="Dumfries Singles 2026 — New Entry" />
-
-          {/* Name */}
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">
-              Full Name <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              required
-              className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
-              placeholder="Your full name"
-            />
-          </div>
-
-          {/* Mobile */}
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">
-              Mobile Number <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="tel"
-              name="mobile"
-              required
-              className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
-              placeholder="For draw notifications"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              className="w-full bg-navy-dark/50 border border-gold/20 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-gold/50 transition-colors"
-              placeholder="Optional"
-            />
-          </div>
-
-          {/* DPL Player */}
-          <div>
-            <label className="block text-xs text-gray-400 mb-2">
-              Are you a registered DPL player? <span className="text-red-400">*</span>
-            </label>
-            <div className="flex gap-3">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="dpl_player"
-                  value="Yes"
-                  required
-                  onChange={() => { setIsDplPlayer("Yes"); setWantsToJoin(""); }}
-                  className="accent-gold"
-                />
-                <span className="text-white text-sm">Yes</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="dpl_player"
-                  value="No"
-                  onChange={() => setIsDplPlayer("No")}
-                  className="accent-gold"
-                />
-                <span className="text-white text-sm">No</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Want to join DPL — only shown if not a DPL player */}
-          {isDplPlayer === "No" && (
-            <div>
-              <label className="block text-xs text-gray-400 mb-2">
-                Would you like to join the Dumfries Pool League? <span className="text-red-400">*</span>
-              </label>
-              <div className="flex gap-3 mb-3">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="wants_to_join"
-                    value="Yes"
-                    required
-                    onChange={() => setWantsToJoin("Yes")}
-                    className="accent-gold"
-                  />
-                  <span className="text-white text-sm">Yes</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="wants_to_join"
-                    value="No"
-                    onChange={() => setWantsToJoin("No")}
-                    className="accent-gold"
-                  />
-                  <span className="text-white text-sm">No</span>
-                </label>
-              </div>
-              {wantsToJoin === "Yes" && (
-                <div className="bg-gold/5 border border-gold/20 rounded-lg p-3 text-xs text-gray-300 leading-relaxed">
-                  To enter SPA events as a Dumfries player you must be a registered DPL member playing for a current team, playing under Blackball Rules. This would require joining a current DPL team and ceasing any International Pool Rules events. A committee member will be in touch to discuss joining.
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Payment confirmation */}
-          <div>
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                name="payment_confirmed"
-                value="Confirmed"
-                required
-                className="mt-0.5 w-4 h-4 accent-gold shrink-0"
-              />
-              <span className="text-gray-300 text-xs leading-relaxed">
-                I confirm I will now send the £5 entry fee to{" "}
-                <span className="text-white font-medium">Dumfries Pool League</span>,{" "}
-                Sort: <span className="text-white font-medium">80-22-60</span>,{" "}
-                Account: <span className="text-white font-medium">25616367</span>,{" "}
-                with my name and “singles” as the reference please. <span className="text-red-400">*</span>
-              </span>
-            </label>
-          </div>
-
-          {status === "error" && (
-            <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm">
-              Something went wrong. Please try again or contact us directly.
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={status === "submitting"}
-            className="w-full sm:w-auto bg-gold text-navy font-bold text-sm px-6 py-3 rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-60 cursor-pointer"
-          >
-            {status === "submitting" ? "Submitting..." : "Submit Entry"}
-          </button>
-        </form>
-      )}
-    </div>
-  );
-}
 
 export default function LeagueCompetitionsPage() {
   return (
@@ -288,6 +82,15 @@ export default function LeagueCompetitionsPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Live Draw */}
+        <SinglesDrawView />
+
+        {/* Entries closed */}
+        <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 text-center mb-6 mt-6">
+          <p className="text-gold font-semibold text-sm">Entries are now closed</p>
+          <p className="text-gray-400 text-xs mt-1">Thank you to everyone who entered. Good luck!</p>
         </div>
 
         {/* View Draw link */}
