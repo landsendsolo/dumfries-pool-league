@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 const ADMIN_PAGES = [
   { href: "/admin/im-draw", label: "SPA Events" },
+    { href: "/admin/singles", label: "Singles Draw" },
   { href: "/admin/ticker", label: "Ticker Settings" },
   { href: "/admin/feedback", label: "Feedback" },
 ];

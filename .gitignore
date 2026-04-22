@@ -44,3 +44,5 @@ next-env.d.ts
 data/ticker-settings.json
 data/feedback.json
 data/spa-events/*/draw.json
+
+data/singles-draw.json
