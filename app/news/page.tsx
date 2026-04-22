@@ -19,6 +19,24 @@ export const metadata = {
 
 const articles: Article[] = [
   {
+    id: "under16-competition-2026",
+    headline: "Dumfries Pool League Under 16 Competition",
+    date: "22nd April 2026",
+    excerpt: "What a brilliant day of pool! We hosted the Dumfries Pool League Under 16 Competition and it was fantastic to see such a great turnout.",
+    imageAspect: "video",
+    image: "/images/news/under16-winners-2026.jpg",
+    imageAlt: "Under 16 Competition winners with trophy",
+    body: [
+      "What a brilliant day of pool!",
+      "Today we hosted the Dumfries Pool League Under 16 Competition, and it was fantastic to see such a great turnout. The standard of play was excellent throughout, with all the lads enjoying themselves and putting on some top-quality performances.",
+      "A huge congratulations to our winner, Reily — outstanding pool all day and a fully deserved victory!",
+      "A big thank you as well to our hosts Abbey Inn Lincluden for putting on a great venue for the event.",
+      "We\u2019re already looking forward to the next one\u2026 and it won\u2019t be long before one of these young players is lifting silverware in the Dumfries Pool League.",
+    ],
+    hashtags: ["under16", "youth", "pool", "dumfries"],
+    sponsor: "",
+  },
+  {
     id: "mvp-paul-harkness",
     headline: "N’Dulge MVP Award — Paul Harkness Leads the Race",
     date: "30th March 2026",
