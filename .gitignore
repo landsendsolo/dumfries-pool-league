@@ -46,3 +46,5 @@ data/feedback.json
 data/spa-events/*/draw.json
 
 data/singles-draw.json
+
+data/spa-events/events.json
