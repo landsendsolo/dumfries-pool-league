@@ -22,7 +22,7 @@
       "format": "First to 7 frames",
       "qualifiers": 2,
       "finals": "20th & 21st June 2026",
-      "finalsVenue": "TBC",
+      "finalsVenue": "Lochy's, Barrhead",
       "hasSpreadsheet": false,
       "drawAvailable": false
     },
@@ -62,12 +62,20 @@
       "qualifiers": 2,
       "finals": "27th & 28th June 2026",
       "finalsVenue": "McGurtys, Dundee",
-      "entryFee": "£5 per player (+£5 if not SPA registered for 2025)",
+      "entryFee": "\u00a35 per player (+\u00a35 if not SPA registered for 2025)",
       "entryDeadline": "Friday 27th March 2026 at 21:00",
       "hasSpreadsheet": false,
       "drawAvailable": false,
       "notes": "Tournament Committee reviews all entries. Those previously ineligible remain ineligible.",
-      "dumfriesEntries": ["Owen Bruce", "Rich Cooper", "Jayde Devlin", "Sean Rutherford", "Gav Hunter", "Mark Lockhart", "Derek Reid"]
+      "dumfriesEntries": [
+        "Owen Bruce",
+        "Rich Cooper",
+        "Jayde Devlin",
+        "Sean Rutherford",
+        "Gav Hunter",
+        "Mark Lockhart",
+        "Derek Reid"
+      ]
     }
   ]
 }
