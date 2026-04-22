@@ -2,6 +2,8 @@
 
 import type { IMDrawData, IMDrawMatch, IMDrawRound } from "@/lib/im-draw-types";
 
+const SLOT_H = 58;
+
 function MatchCard({ match, isFinal }: { match: IMDrawMatch; isFinal: boolean }) {
   const isComplete = match.winner !== null;
   const p1Won = isComplete && match.winner === match.player1;
@@ -161,6 +163,7 @@ export function IMDrawView({ data }: { data: IMDrawData }) {
               matches={roundMatches}
               roundIndex={roundIndex}
               isFinal={roundIndex === 4}
+              round0Count={matchesByRound[0]?.length ?? 1}
             />
           ))}
         </div>
@@ -228,17 +231,16 @@ export function IMDrawView({ data }: { data: IMDrawData }) {
 function RoundColumn({
   roundInfo,
   matches,
-  roundIndex,
+  round0Count,
   isFinal,
 }: {
   roundInfo: IMDrawRound;
   matches: IMDrawMatch[];
-  roundIndex: number;
+  round0Count: number;
   isFinal: boolean;
 }) {
-  // Exponential spacing to align feeder matches
-  const gap = Math.pow(2, roundIndex) * 8 + 8;
-  const paddingTop = (Math.pow(2, roundIndex) - 1) * 24;
+  const totalH = round0Count * SLOT_H;
+  const slotH = totalH / matches.length;
 
   return (
     <div className="flex-1" style={{ minWidth: "160px" }}>
@@ -251,12 +253,13 @@ function RoundColumn({
       </div>
 
       {/* Match cards */}
-      <div
-        className="flex flex-col"
-        style={{ gap: `${gap}px`, paddingTop: `${paddingTop}px` }}
-      >
+      <div style={{ height: `${totalH}px` }} className="flex flex-col">
         {matches.map((match) => (
-          <MatchCard key={match.id} match={match} isFinal={isFinal} />
+          <div key={match.id} style={{ height: `${slotH}px` }} className="flex items-center">
+            <div className="w-full">
+              <MatchCard match={match} isFinal={isFinal} />
+            </div>
+          </div>
         ))}
       </div>
     </div>
