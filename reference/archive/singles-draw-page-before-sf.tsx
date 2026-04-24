@@ -402,8 +402,6 @@ export default function SinglesDrawPage() {
     withFeeders(enrich(TBD, `R3-${i + 5}`), `R2-${i * 2 + 9}`, `R2-${i * 2 + 10}`));
   const eR_R4 = Array.from({ length: 2 }, (_, i) =>
     withFeeders(enrich(TBD, `QF-${i + 3}`), `R3-${i * 2 + 5}`, `R3-${i * 2 + 6}`));
-  const eL_SF = withFeeders(enrich(TBD, "SF-1"), "QF-1", "QF-2");
-  const eR_SF = withFeeders(enrich(TBD, "SF-2"), "QF-3", "QF-4");
   const eFinal = withFeeders(enrich(TBD, "F-1"), "SF-1", "SF-2");
 
   /* ── X positions ── */
@@ -413,21 +411,19 @@ export default function SinglesDrawPage() {
   const L_R3_X = leftStartX + 2 * STEP;
   const L_R4_X = leftStartX + 3 * STEP;
 
-  const halfW = 4 * STEP + COL_W;
+  const halfW = 3 * STEP + COL_W;
   const centerGap = 40;
   const finalW = 180;
   const finalGap = 40;
 
   const finalX = leftStartX + halfW + centerGap;
   const finalY = finalCenterY - 50;
-  const L_SF_X = leftStartX + 4 * STEP;
 
-  /* Right half: SF closest to center, R1 on the far right */
-  const R_SF_X = finalX + finalW + finalGap;
-  const R_QF_X = R_SF_X + STEP;
-  const R_R3_X = R_SF_X + 2 * STEP;
-  const R_R2_X = R_SF_X + 3 * STEP;
-  const R_R1_X = R_SF_X + 4 * STEP;
+  /* Right half: R4 closest to center, R1 on the far right */
+  const R_R4_X = finalX + finalW + finalGap;
+  const R_R3_X = R_R4_X + STEP;
+  const R_R2_X = R_R4_X + 2 * STEP;
+  const R_R1_X = R_R4_X + 3 * STEP;
 
   const svgW = R_R1_X + COL_W + 20;
 
@@ -489,18 +485,11 @@ export default function SinglesDrawPage() {
 
             {leftConnectors(r3Ys, r4Ys, L_R3_X, L_R4_X, "lc-34")}
 
-            {renderLabel("Quarter Finals", L_R4_X, r4Ys[0], "L-R4")}
+            {renderLabel("Round 4", L_R4_X, r4Ys[0], "L-R4")}
             {eL_R4.map((m, i) => renderMatch(m, L_R4_X, r4Ys[i], `L-R4-${i}`))}
 
-            {/* L-QF → SF */}
-            {leftConnectors(r4Ys, [finalCenterY], L_R4_X, L_SF_X, "lc-qfsf")}
-
-            {renderLabel("Semi Finals", L_SF_X, finalCenterY, "L-SF")}
-            {renderMatch(eL_SF, L_SF_X, finalCenterY, "L-SF-0")}
-
-            {/* L-SF → Final */}
-            <line x1={L_SF_X + COL_W} y1={finalCenterY} x2={finalX} y2={finalCenterY}
-              stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
+            {/* L-R4 → Final */}
+            {leftConnectors(r4Ys, [finalCenterY], L_R4_X, finalX, "lc-4f")}
 
             {/* ── RIGHT HALF ── */}
 
@@ -517,20 +506,29 @@ export default function SinglesDrawPage() {
             {renderLabel("Round 3", R_R3_X, r3Ys[0], "R-R3")}
             {eR_R3.map((m, i) => renderMatch(m, R_R3_X, r3Ys[i], `R-R3-${i}`))}
 
-            {rightConnectors(r3Ys, r4Ys, R_R3_X, R_QF_X, "rc-34")}
+            {rightConnectors(r3Ys, r4Ys, R_R3_X, R_R4_X, "rc-34")}
 
-            {renderLabel("Quarter Finals", R_QF_X, r4Ys[0], "R-R4")}
-            {eR_R4.map((m, i) => renderMatch(m, R_QF_X, r4Ys[i], `R-R4-${i}`))}
+            {renderLabel("Round 4", R_R4_X, r4Ys[0], "R-R4")}
+            {eR_R4.map((m, i) => renderMatch(m, R_R4_X, r4Ys[i], `R-R4-${i}`))}
 
-            {/* R-QF → SF */}
-            {rightConnectors(r4Ys, [finalCenterY], R_QF_X, R_SF_X, "rc-qfsf")}
-
-            {renderLabel("Semi Finals", R_SF_X, finalCenterY, "R-SF")}
-            {renderMatch(eR_SF, R_SF_X, finalCenterY, "R-SF-0")}
-
-            {/* R-SF → Final */}
-            <line x1={R_SF_X} y1={finalCenterY} x2={finalX + finalW} y2={finalCenterY}
-              stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
+            {/* R-R4 → Final (right-to-left into Final's right edge) */}
+            {(() => {
+              const exitX = R_R4_X;
+              const entryX = finalX + finalW;
+              const midX = (exitX + entryX) / 2;
+              return (
+                <>
+                  <line x1={exitX} y1={r4Ys[0]} x2={midX} y2={r4Ys[0]}
+                    stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
+                  <line x1={exitX} y1={r4Ys[1]} x2={midX} y2={r4Ys[1]}
+                    stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
+                  <line x1={midX} y1={r4Ys[0]} x2={midX} y2={r4Ys[1]}
+                    stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
+                  <line x1={midX} y1={finalCenterY} x2={entryX} y2={finalCenterY}
+                    stroke={CONN_COLOR} strokeOpacity={CONN_OPACITY} strokeWidth={1} />
+                </>
+              );
+            })()}
 
             {/* ── FINAL BOX ── */}
             <rect
