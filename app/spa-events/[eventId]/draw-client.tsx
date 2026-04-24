@@ -3,12 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { IMDrawData } from "@/lib/im-draw-types";
+import type { SpaEvent } from "@/lib/spa-event-types";
 import { IMDrawView } from "../draw";
 
-interface EventMeta {
-  fullName?: string;
-  [key: string]: unknown;
-}
 
 export function DrawClient({
   eventId,
@@ -17,10 +14,10 @@ export function DrawClient({
 }: {
   eventId: string;
   initialData: IMDrawData | null;
-  initialMeta: EventMeta | null;
+  initialMeta: SpaEvent | null;
 }) {
   const [data, setData] = useState<IMDrawData | null>(initialData);
-  const [eventMeta] = useState<EventMeta | null>(initialMeta);
+  const [eventMeta] = useState<SpaEvent | null>(initialMeta);
 
   useEffect(() => {
     const load = () =>
