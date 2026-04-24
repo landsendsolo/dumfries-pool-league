@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { SinglesDrawView } from "./singles-draw-client";
 
 // ── Team Competition — completed ──────────────────────────────
 const SF1_WINNER: string = "Abbey A";
@@ -83,9 +82,6 @@ export default function LeagueCompetitionsPage() {
             </div>
           </div>
         </div>
-
-        {/* Live Draw */}
-        <SinglesDrawView />
 
         {/* Entries closed */}
         <div className="bg-navy-light/50 border border-gold/20 rounded-xl p-4 text-center mb-6 mt-6">
