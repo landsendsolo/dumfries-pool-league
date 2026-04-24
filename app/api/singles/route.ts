@@ -10,7 +10,12 @@ const DATA_PATH = path.join(process.cwd(), "data", "singles-draw.json");
 export async function GET() {
   try {
     const raw = await readFile(DATA_PATH, "utf-8");
-    return NextResponse.json(JSON.parse(raw));
+    return NextResponse.json(JSON.parse(raw), {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+      },
+    });
   } catch {
     return NextResponse.json({ error: "Failed to read draw data" }, { status: 500 });
   }
