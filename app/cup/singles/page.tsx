@@ -569,7 +569,7 @@ export default function SinglesDrawPage() {
               x={finalX + finalW / 2}
               y={finalY + 48}
               textAnchor="middle"
-              fill={finalP1Won ? "#c9a84c" : "rgba(156,163,175,0.4)"}
+              fill={finalP1Won ? "#c9a84c" : "#e2e8f0"}
               fontSize={FONT}
               fontWeight={finalP1Won ? 700 : 400}
             >
@@ -588,7 +588,7 @@ export default function SinglesDrawPage() {
               x={finalX + finalW / 2}
               y={finalY + 82}
               textAnchor="middle"
-              fill={finalP2Won ? "#c9a84c" : "rgba(156,163,175,0.4)"}
+              fill={finalP2Won ? "#c9a84c" : "#e2e8f0"}
               fontSize={FONT}
               fontWeight={finalP2Won ? 700 : 400}
             >
