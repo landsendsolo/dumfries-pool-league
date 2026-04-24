@@ -347,10 +347,12 @@ export default function SinglesDrawPage() {
   const [drawData, setDrawData] = useState<DrawData | null>(null);
 
   useEffect(() => {
-    fetch(`/api/singles?t=${Date.now()}`, { cache: "no-store" })
-      .then((r) => r.json())
-      .then(setDrawData)
-      .catch(() => {});
+    const load = () => fetch('/api/singles').then(r => r.json()).then(setDrawData).catch(() => {});
+    load();
+    const interval = setInterval(load, 15000);
+    const onVisible = () => { if (!document.hidden) load(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => { clearInterval(interval); document.removeEventListener('visibilitychange', onVisible); };
   }, []);
 
   /* ── build API lookup ── */
