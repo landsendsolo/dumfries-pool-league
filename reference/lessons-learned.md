@@ -77,3 +77,29 @@
 - A `withFeeders()` helper is needed that reads winner fields from the match lookup and fills null player slots in subsequent rounds
 - Must be applied in both the public draw page and the admin page
 - Pattern: `p1: m.p1 === "TBD" ? (md[feeder1Id]?.winner ?? "TBD") : m.p1`
+
+## events.json State Management (25 April 2026)
+- `data/spa-events/events.json` on the VPS is the single source of truth — never overwrite from local
+- Always edit directly on the VPS using SSH Python script: ssh into VPS, run `python3 -c` to load, modify specific event fields only, save back
+- Local copy is unreliable and has caused willie-mccartney and im-2 draw status to be reset multiple times
+
+## Draw Pages Need Auto-Polling
+- Both `/cup/singles` and `/spa-events/[eventId]` required polling to update without manual refresh
+- Fix: `useEffect` with `setInterval` every 15s plus `document visibilitychange` listener
+- `Cache-Control: no-store` headers on the API GET route also required to prevent browser caching
+- Pattern: `const load = () => fetch(url).then(r => r.json()).then(setState).catch(() => {})`
+
+## Singles Draw Semi Finals Column Was Missing (25 April 2026)
+- Bracket went QF → Final directly, skipping SF
+- Root cause: SF-1 and SF-2 were referenced as Final feeders but never rendered as SVG boxes
+- Fix required: new X positions for SF columns, new connectors, new MatchBox renders, rename Round 4 labels to Quarter Finals
+- halfW must increase by one STEP per new column added on each side
+
+## News Article Image Sizing
+- Always upscale images to at least 1800px wide before saving to `public/images/news/`
+- Use Pillow with `Image.LANCZOS` resampling and `quality=95`
+- Portrait images should use `imageAspect: "square"` to match existing articles
+
+## git revert Is the Correct Rollback
+- When a deploy breaks something previously working, use `git revert HEAD --no-edit` followed by deploy
+- Do not try to manually undo changes — revert creates a clean new commit that undoes the previous one
