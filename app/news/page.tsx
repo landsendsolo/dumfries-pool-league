@@ -19,6 +19,22 @@ export const metadata = {
 
 const articles: Article[] = [
   {
+    id: "singles-champion-2026",
+    headline: "Owen Bruce — 2026 Dumfries Singles Champion",
+    date: "25th April 2026",
+    excerpt: "Owen Bruce is the 2026 Dumfries Singles Champion, defeating Andy Moffat 5-3 in a brilliant final at Abbey Inn Lincluden.",
+    imageAspect: "square",
+    image: "/images/news/singles-champion-2026.jpg",
+    imageAlt: "Owen Bruce — 2026 Dumfries Singles Champion",
+    body: [
+      "Owen Bruce is the 2026 Dumfries Singles Champion, defeating Andy Moffat 5-3 in a brilliant final at Abbey Inn Lincluden.",
+      "A huge congratulations to Owen — a fully deserved victory and he now joins the list of two-time winners of the competition.",
+      "A big thank you to our sponsors GH Gardening and Labouring Services for supporting the competition, and to Abbey Inn Lincluden for hosting a fantastic evening.",
+    ],
+    hashtags: ["singles", "champion", "pool", "dumfries"],
+    sponsor: "",
+  },
+  {
     id: "under16-competition-2026",
     headline: "Dumfries Pool League Under 16 Competition",
     date: "22nd April 2026",
