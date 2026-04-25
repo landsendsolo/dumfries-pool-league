@@ -103,3 +103,17 @@
 ## git revert Is the Correct Rollback
 - When a deploy breaks something previously working, use `git revert HEAD --no-edit` followed by deploy
 - Do not try to manually undo changes — revert creates a clean new commit that undoes the previous one
+
+## Always Specify "Do Not Touch Anything Else" in Prompts
+- Any prompt that modifies a specific part of a file must explicitly state "do not change any other code, styling, structure or content in the file"
+- Without this, Claude Code may refactor, reformat, or make unintended surrounding changes
+
+## events.json Must Always Be Edited Directly on VPS via SSH Python
+- Never SCP from local — the local copy may be stale and will overwrite correct VPS state
+- Pattern: SSH into VPS, `python3 -c` to load JSON, modify only the specific event fields needed, save back
+- Verified working for willie-mccartney and im-2 status/drawAvailable fixes
+
+## Honours Page Singles Winners
+- Full list populated 1987–2026 from trophy board image on 25 April 2026
+- Owen Bruce added as 2026 champion
+- Array was empty (`winners: []`) before this session
