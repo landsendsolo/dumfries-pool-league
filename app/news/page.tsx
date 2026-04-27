@@ -19,6 +19,22 @@ export const metadata = {
 
 const articles: Article[] = [
   {
+    id: "triples-champions-2026",
+    headline: "Two Pints Pwick — Back-to-Back Triples Champions",
+    date: "27th April 2026",
+    excerpt: "Congratulations to Two Pints Pwick — back-to-back champions in the Triples! The lads were outstanding all day and capped it off with a brilliant win over Specs=CJ2 in the final.",
+    imageAspect: "square",
+    image: "/images/news/triples-champions-2026.jpg",
+    imageAlt: "Two Pints Pwick — Back-to-Back Triples Champions 2026",
+    body: [
+      "Congratulations to Two Pints Pwick — back-to-back champions in the Triples! The lads were outstanding all day and capped it off with a brilliant win over the \"people's champs\" Specs=CJ2 in the final.",
+      "A massive well done to Andy, Liam and Jonny — top class from start to finish.",
+      "A big thank you to Abbey Inn Lincluden for hosting over the past couple of weeks — a great venue and a great couple of nights for everyone involved.",
+    ],
+    hashtags: ["triples", "champions", "pool", "dumfries"],
+    sponsor: "",
+  },
+  {
     id: "singles-champion-2026",
     headline: "Owen Bruce — 2026 Dumfries Singles Champion",
     date: "25th April 2026",
