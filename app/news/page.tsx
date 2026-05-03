@@ -19,6 +19,23 @@ export const metadata = {
 
 const articles: Article[] = [
   {
+    id: "ndulge-mvp-kirkpatrick",
+    headline: "N'Dulge MVP",
+    date: "1st May 2026",
+    excerpt: "This season introduces a brand new award… the Most Valuable Player (MVP). With just 3 rounds remaining, it's Steven Kirkpatrick who leads the way and currently holds the bragging rights.",
+    imageAspect: "square",
+    image: "/images/news/ndulge-mvp-kirkpatrick.jpg",
+    imageAlt: "Steven Kirkpatrick — N'Dulge MVP leader",
+    body: [
+      "This season introduces a brand new award… the Most Valuable Player (MVP)",
+      "The MVP will go to the player with the highest win rate across the season, with a minimum of 75% of fixtures played to qualify. Consistency is key – every frame counts!",
+      "With just 3 rounds remaining, it's Steven Kirkpatrick who leads the way and currently holds the bragging rights… but can he see it through to the finish?",
+      "A big thank you to N'Dulge for their continued support of the league!",
+    ],
+    hashtags: ["MVP", "DumfriesPool", "NDulge"],
+    sponsor: "N'Dulge",
+  },
+  {
     id: "triples-champions-2026",
     headline: "Two Pints Pwick — Back-to-Back Triples Champions",
     date: "27th April 2026",
