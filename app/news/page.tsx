@@ -19,6 +19,21 @@ export const metadata = {
 
 const articles: Article[] = [
   {
+    id: "scottish-champions-dinner-2026",
+    headline: "Scottish Champions Celebration Dinner",
+    date: "3rd May 2026",
+    excerpt: "The Scottish Champions out for a champions dinner to celebrate their success.",
+    imageAspect: "square",
+    image: "/images/news/scottish-champions-dinner-2026.jpg",
+    imageAlt: "Scottish Champions Celebration Dinner 2026",
+    body: [
+      "The Scottish Champions out for a champions dinner to celebrate their success.",
+      "What a team!",
+    ],
+    hashtags: ["ScottishChampions", "DumfriesPool", "Champions2026"],
+    sponsor: "",
+  },
+  {
     id: "ndulge-mvp-kirkpatrick",
     headline: "N'Dulge MVP",
     date: "1st May 2026",
